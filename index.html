@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>APOTHEOSIS — Frontend Engineering Ascension</title>
+  
+  <!-- Google Fonts: Cinzel (Classical Greek Display), Plus Jakarta Sans (Clean Material UI), JetBrains Mono (Code) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- GSAP & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Cinzel', 'Georgia', 'serif'],
+            sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            marble: {
+              50: '#F8FAFC',
+              100: '#F1F5F9',
+              200: '#E2E8F0',
+              300: '#CBD5E1',
+              800: '#1E293B',
+              900: '#0F172A',
+              950: '#090D16',
+            },
+            olympus: {
+              gold: '#D97706',
+              goldLight: '#FBBF24',
+              goldDark: '#B45309',
+              aegean: '#1D4ED8',
+              aegeanLight: '#60A5FA',
+              terracotta: '#DC2626',
+              laurel: '#059669',
+            }
+          },
+          boxShadow: {
+            'temple': '0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 1px 3px -1px rgba(15, 23, 42, 0.04)',
+            'temple-dark': '0 4px 24px -2px rgba(0, 0, 0, 0.55), 0 1px 3px -1px rgba(59, 130, 246, 0.12)',
+            'gold-glow': '0 0 24px rgba(217, 119, 6, 0.28)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Classical Greek Meander / Key Pattern Border */
+    .greek-meander {
+      height: 10px;
+      width: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg width='40' height='10' viewBox='0 0 40 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 9h18V1H6v5h8V4h-5v1h3v2H4V0h16v9h20' fill='none' stroke='%231D4ED8' stroke-opacity='0.45' stroke-width='1.2'/%3E%3C/svg%3E");
+      background-repeat: repeat-x;
+    }
+
+    /* Subtle Marble Grain Overlay */
+    .marble-texture {
+      background-image: radial-gradient(rgba(29, 78, 216, 0.06) 1px, transparent 0);
+      background-size: 24px 24px;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(29, 78, 216, 0.35);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(29, 78, 216, 0.65);
+    }
+
+    /* Hide scrollbar for horizontal pill rails */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Fluted Column Subtle Accent */
+    .fluted-pillar {
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(29, 78, 216, 0.08) 0px,
+        rgba(29, 78, 216, 0.08) 2px,
+        transparent 2px,
+        transparent 8px
+      );
+    }
+  </style>
+</head>
+<body class="bg-marble-50 text-slate-900 dark:bg-marble-950 dark:text-slate-100 font-sans antialiased selection:bg-olympus-aegean/20 selection:text-olympus-aegean dark:selection:text-olympus-aegeanLight transition-colors duration-300 marble-texture min-h-screen flex flex-col">
+
+  <!-- Toast Notification Container (Replaces alert) -->
+  <div id="toast-container" aria-live="polite" class="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- App Shell Layout -->
+  <div class="flex flex-1 min-h-screen">
+    
+    <!-- Desktop Navigation Rail (Material 3 Inspired + Greek Pillar Aesthetics) -->
+    <aside class="hidden md:flex flex-col w-72 bg-marble-100/90 dark:bg-marble-900/95 border-r border-slate-200/80 dark:border-slate-800/80 backdrop-blur-md sticky top-0 h-screen z-30 justify-between">
+      <div>
+        <!-- Brand Header -->
+        <div class="p-6 pb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-slate-900 dark:bg-olympus-aegean flex items-center justify-center text-amber-300 shadow-sm shrink-0">
+              <!-- Classical Temple SVG Icon -->
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 21h18M4 18h16M6 18V9M10 18V9M14 18V9M18 18V9M2 9l10-6 10 6H2z"/>
+              </svg>
+            </div>
+            <div>
+              <h1 class="font-display font-bold text-base tracking-wider text-slate-900 dark:text-slate-50">APOTHEOSIS</h1>
+              <p class="text-[11px] tracking-wide text-slate-500 dark:text-slate-400 font-medium">Frontend Roadmap</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-b border-slate-200/70 dark:border-slate-800/70 mx-4 mb-4"></div>
+
+        <!-- Primary Navigation Links -->
+        <nav aria-label="Primary Navigation" class="px-3 space-y-1" id="desktop-nav">
+          <button data-view="sanctuary" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all bg-olympus-aegean/10 text-olympus-aegean dark:text-olympus-aegeanLight">
+            <span class="flex items-center gap-2.5 truncate">
+              <kbd class="font-mono text-[10px] px-1 rounded bg-black/5 dark:bg-white/10 opacity-70">1</kbd>
+              <span>Overview</span>
+            </span>
+            <span class="text-[11px] font-mono opacity-80" id="nav-overall-pct">0%</span>
+          </button>
+
+          <button data-view="pillars" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 transition-all">
+            <span class="flex items-center gap-2.5 truncate">
+              <kbd class="font-mono text-[10px] px-1 rounded bg-black/5 dark:bg-white/10 opacity-70">2</kbd>
+              <span>Modules</span>
+            </span>
+            <span class="text-[11px] font-mono text-slate-500" id="nav-syllabus-count">0/53</span>
+          </button>
+
+          <button data-view="labors" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 transition-all">
+            <span class="flex items-center gap-2.5 truncate">
+              <kbd class="font-mono text-[10px] px-1 rounded bg-black/5 dark:bg-white/10 opacity-70">3</kbd>
+              <span>Projects</span>
+            </span>
+            <span class="text-[11px] font-mono text-slate-500" id="nav-projects-count">0/5</span>
+          </button>
+
+          <button data-view="agora" class="nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 transition-all">
+            <span class="flex items-center gap-2.5 truncate">
+              <kbd class="font-mono text-[10px] px-1 rounded bg-black/5 dark:bg-white/10 opacity-70">4</kbd>
+              <span>DSA 50</span>
+            </span>
+            <span class="text-[11px] font-mono text-slate-500" id="nav-dsa-count">0/50</span>
+          </button>
+        </nav>
+
+        <!-- Quick Filter Presets (1-Click High-Yield Workflows) -->
+        <div class="mt-6 px-3">
+          <div class="text-[10px] font-mono uppercase tracking-wider text-slate-400 px-2 mb-1.5">Focus Views</div>
+          <div class="space-y-1">
+            <button onclick="quickJump('remaining-practice')" class="w-full text-left px-2.5 py-1.5 rounded-lg text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 flex items-center justify-between transition-colors">
+              <span>Remaining Practice</span>
+              <span id="shortcut-practice-rem" class="font-mono text-[10px] text-olympus-aegean dark:text-olympus-aegeanLight">26</span>
+            </button>
+            <button onclick="quickJump('flagships')" class="w-full text-left px-2.5 py-1.5 rounded-lg text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 flex items-center justify-between transition-colors">
+              <span>Flagship Projects</span>
+              <span id="shortcut-flagship-rem" class="font-mono text-[10px] text-olympus-goldDark dark:text-olympus-goldLight">3</span>
+            </button>
+            <button onclick="quickJump('frontend-dsa')" class="w-full text-left px-2.5 py-1.5 rounded-lg text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 flex items-center justify-between transition-colors">
+              <span>Frontend DSA</span>
+              <span class="font-mono text-[10px] text-olympus-laurel dark:text-emerald-400">13</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Milestone / Level Status Card in Sidebar -->
+      <div class="p-4 m-3 rounded-xl bg-white dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Milestone</span>
+          <span id="sidebar-rank-roman" class="font-mono text-xs text-olympus-aegean dark:text-olympus-aegeanLight font-bold">L1</span>
+        </div>
+        <div id="sidebar-rank-title" class="font-semibold text-sm text-slate-900 dark:text-white mb-2">Foundations</div>
+        <div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden mb-2">
+          <div id="sidebar-progress-bar" class="bg-olympus-aegean dark:bg-olympus-aegeanLight h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+        <div class="flex items-center justify-between text-[11px] text-slate-500">
+          <span id="sidebar-xp-text">0 / 108 Done</span>
+          <button id="export-progress-btn" class="text-olympus-aegean dark:text-olympus-aegeanLight hover:underline font-medium">Export</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace Area -->
+    <div class="flex-1 flex flex-col min-w-0 pb-16 md:pb-6">
+      
+      <!-- Slim Sticky Command Top Bar -->
+      <header class="sticky top-0 z-20 bg-marble-50/90 dark:bg-marble-950/90 backdrop-blur-md border-b border-stone-200 dark:border-stone-800 px-3 sm:px-6 py-2">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-2.5">
+          
+          <!-- Mobile Brand -->
+          <div class="flex items-center gap-2 md:hidden shrink-0">
+            <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-olympus-gold to-olympus-goldDark flex items-center justify-center text-white">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M4 18h16M6 18V9M10 18V9M14 18V9M18 18V9M2 9l10-6 10 6H2z"/></svg>
+            </div>
+            <span class="font-display font-bold text-sm tracking-wider">APOTHEOSIS</span>
+          </div>
+
+          <!-- Instant Filter / Command Bar -->
+          <div class="relative flex-1 max-w-xl">
+            <svg class="w-3.5 h-3.5 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input 
+              id="global-search" 
+              type="search" 
+              placeholder="Filter syllabus, tags, LeetCode #, or projects... (Press /)" 
+              aria-label="Search curriculum"
+              class="w-full pl-8 pr-10 py-1.5 text-xs sm:text-sm rounded-lg bg-marble-100 dark:bg-marble-900 border border-stone-200 dark:border-stone-800 focus:outline-none focus:ring-2 focus:ring-olympus-gold/50 focus:border-olympus-gold transition-all placeholder:text-stone-400"
+            />
+            <kbd class="hidden sm:inline-block absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-mono px-1.5 py-0.2 rounded bg-stone-200/80 dark:bg-stone-800 text-stone-500">/</kbd>
+          </div>
+
+          <!-- Live Inline Telemetry Strip + Utility Toggles -->
+          <div class="flex items-center gap-2 shrink-0">
+            <!-- Compact Status Pill -->
+            <div class="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-lg bg-marble-100 dark:bg-marble-900 border border-stone-200 dark:border-stone-800 text-xs font-mono">
+              <span class="text-olympus-goldDark dark:text-olympus-goldLight font-bold" id="topbar-pct">0%</span>
+              <span class="text-stone-300 dark:text-stone-700">|</span>
+              <span class="text-stone-600 dark:text-stone-400" id="topbar-trials">0/108</span>
+            </div>
+
+            <!-- Hide Completed Toggle (High-Efficiency Focus Mode) -->
+            <button id="hide-completed-toggle" title="Toggle Hide Completed Items (Focus Mode)" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-marble-100 dark:bg-marble-900 border border-slate-200 dark:border-slate-800 hover:border-olympus-aegean text-slate-600 dark:text-slate-300 transition-colors">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
+              <span class="hidden sm:inline" id="hide-completed-label">Hide Done</span>
+            </button>
+
+            <!-- Theme Toggle -->
+            <button id="theme-toggle" aria-label="Toggle Light or Dark Theme" class="p-1.5 rounded-lg bg-marble-100 dark:bg-marble-900 border border-slate-200 dark:border-slate-800 hover:border-olympus-aegean text-slate-700 dark:text-slate-300 transition-colors">
+              <svg id="icon-sun" class="w-4 h-4 hidden dark:block text-amber-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+              <svg id="icon-moon" class="w-4 h-4 block dark:hidden text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Master-Detail Workspace Grid -->
+      <div class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 pt-4 flex gap-5 items-start">
+        
+        <!-- Primary Operational List / Viewport -->
+        <main id="app-viewport" class="flex-1 min-w-0">
+          <!-- Content dynamically rendered here -->
+        </main>
+
+        <!-- Persistent Desktop Inspector Panel (Zero-Modal Context Switching on xl+ screens) -->
+        <aside id="desktop-inspector" class="hidden xl:flex flex-col w-88 shrink-0 sticky top-14 rounded-2xl bg-white dark:bg-marble-900 border border-stone-200 dark:border-stone-800 shadow-temple dark:shadow-temple-dark overflow-hidden max-h-[calc(100vh-4.5rem)]">
+          <!-- Inspector dynamically rendered -->
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav aria-label="Mobile Navigation" class="md:hidden fixed bottom-0 inset-x-0 z-30 bg-marble-100/95 dark:bg-marble-900/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-2 py-1 flex justify-around items-center">
+    <button data-view="sanctuary" class="mobile-nav-btn flex flex-col items-center gap-0.5 py-1 px-3 rounded-lg text-olympus-aegean dark:text-olympus-aegeanLight">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      <span class="text-[10px] font-semibold">Overview</span>
+    </button>
+    <button data-view="pillars" class="mobile-nav-btn flex flex-col items-center gap-0.5 py-1 px-3 rounded-lg text-slate-500 dark:text-slate-400">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+      <span class="text-[10px] font-medium">Modules</span>
+    </button>
+    <button data-view="labors" class="mobile-nav-btn flex flex-col items-center gap-0.5 py-1 px-3 rounded-lg text-slate-500 dark:text-slate-400">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+      <span class="text-[10px] font-medium">Projects</span>
+    </button>
+    <button data-view="agora" class="mobile-nav-btn flex flex-col items-center gap-0.5 py-1 px-3 rounded-lg text-slate-500 dark:text-slate-400">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+      <span class="text-[10px] font-medium">DSA 50</span>
+    </button>
+  </nav>
+
+  <!-- Mobile/Tablet Slide-Over Detail Drawer (Used below xl breakpoint) -->
+  <div id="detail-drawer-backdrop" class="xl:hidden fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-40 hidden opacity-0 transition-opacity duration-200"></div>
+  <aside id="detail-drawer" aria-hidden="true" class="xl:hidden fixed top-0 right-0 h-full w-full max-w-md bg-marble-50 dark:bg-marble-900 border-l border-slate-200 dark:border-slate-800 z-50 shadow-2xl transform translate-x-full transition-transform duration-250 flex flex-col">
+    <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-start justify-between gap-3">
+      <div>
+        <span id="drawer-badge" class="inline-block text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-olympus-aegean/10 text-olympus-aegean dark:text-olympus-aegeanLight font-semibold mb-1"></span>
+        <h2 id="drawer-title" class="font-semibold text-base text-slate-900 dark:text-white leading-snug"></h2>
+      </div>
+      <button id="drawer-close-btn" aria-label="Close drawer" class="p-1.5 rounded-lg hover:bg-slate-200/70 dark:hover:bg-slate-800 text-slate-500 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div id="drawer-body" class="flex-1 overflow-y-auto p-4 space-y-4"></div>
+
+    <div class="p-3 border-t border-slate-200 dark:border-slate-800 bg-marble-100/70 dark:bg-marble-950/70 flex items-center justify-between gap-2">
+      <button id="drawer-toggle-complete" class="px-3.5 py-2 rounded-lg text-xs font-semibold transition-all"></button>
+      <button id="drawer-save-btn" class="px-4 py-2 rounded-lg text-xs font-semibold bg-olympus-aegean hover:bg-blue-800 text-white transition-colors">
+        Done
+      </button>
+    </div>
+  </aside>
+
+  <script>
+    /**
+     * ============================================================================
+     * 1. CANONICAL CURRICULUM DATASET (apotheosis.md)
+     * ============================================================================
+     */
+    const CURRICULUM_DATA = {
+      meta: {
+        id: "frontend-0-to-hero-curriculum",
+        title: "0-to-Hero Frontend Engineering Curriculum",
+        version: "2.0.0",
+        targetRole: "Frontend Engineer (NCR / Product / Full-Stack Frontend)",
+        defaultLanguage: "TypeScript",
+        supportedLanguages: ["TypeScript", "JavaScript"],
+        counts: {
+          syllabusModules: 8,
+          practiceTasks: 26,
+          interviewConcepts: 27,
+          projects: 5,
+          flagshipProjects: 3,
+          dsaCategories: 5,
+          dsaProblems: 50
+        }
+      },
+      syllabus: [
+        {
+          id: "mod-1",
+          slug: "html5-modern-css-responsive-design",
+          order: 1,
+          roman: "I",
+          deity: "Athena • Structure",
+          title: "HTML5, Modern CSS & Responsive Design",
+          practice: [
+            { id: "mod-1-prac-1", order: 1, type: "practice", text: "Build semantic layouts using <header>, <main>, <nav>, <article>, <section>, and accessible <form> controls with proper <label> associations.", tags: ["html5", "semantics", "forms", "accessibility"] },
+            { id: "mod-1-prac-2", order: 2, type: "practice", text: "Build complex 2D dashboards with CSS Grid and 1D alignment/navbars with Flexbox without hardcoding pixel widths.", tags: ["css-grid", "flexbox", "layout"] },
+            { id: "mod-1-prac-3", order: 3, type: "practice", text: "Implement mobile-first responsive breakpoints, fluid typography (clamp()), CSS custom properties (variables), and dark/light theme switching.", tags: ["responsive", "clamp", "css-variables", "theming"] },
+            { id: "mod-1-prac-4", order: 4, type: "practice", text: "Recreate common UI layouts in Tailwind CSS (responsive cards, sticky sidebars, modals).", tags: ["tailwind-css", "ui-patterns"] }
+          ],
+          interviewConcepts: [
+            { id: "mod-1-int-1", order: 1, type: "interview-concept", text: "Semantic HTML & why it matters for SEO and screen readers (ARIA roles, aria-label, tabindex, focus traps).", tags: ["seo", "a11y", "aria", "focus-management"] },
+            { id: "mod-1-int-2", order: 2, type: "interview-concept", text: "The CSS Box Model (content-box vs. border-box), specificity calculation, stacking context (z-index), and positioning (relative, absolute, fixed, sticky).", tags: ["box-model", "specificity", "z-index", "positioning"] },
+            { id: "mod-1-int-3", order: 3, type: "interview-concept", text: "rem vs. em vs. px vs. vh/dvh.", tags: ["css-units", "viewport"] },
+            { id: "mod-1-int-4", order: 4, type: "interview-concept", text: "Critical Rendering Path (how the browser turns HTML/CSS/JS into pixels, reflow vs. repaint).", tags: ["browser-internals", "rendering", "reflow-repaint"] }
+          ]
+        },
+        {
+          id: "mod-2",
+          slug: "core-javascript-internals",
+          order: 2,
+          roman: "II",
+          deity: "Hephaestus • Engine",
+          title: "Core JavaScript (0 to Internals)",
+          practice: [
+            { id: "mod-2-prac-1", order: 1, type: "practice", text: "Write polyfills from scratch: Array.prototype.map, filter, reduce, flat, and Function.prototype.call, apply, bind.", tags: ["polyfills", "arrays", "functions"] },
+            { id: "mod-2-prac-2", order: 2, type: "practice", text: "Write utility functions: debounce(), throttle(), memoize(), deepClone() (handling nested objects/arrays), and curry().", tags: ["utilities", "debounce", "throttle", "memoize", "deep-clone", "curry"] },
+            { id: "mod-2-prac-3", order: 3, type: "practice", text: "Practice immutable array/object transformations (structuredClone, spread/rest, Object.groupBy, Map, Set).", tags: ["immutability", "structuredClone", "map-set"] }
+          ],
+          interviewConcepts: [
+            { id: "mod-2-int-1", order: 1, type: "interview-concept", text: "Execution context, call stack, lexical scope, and closures (including classic stale closure bugs).", tags: ["execution-context", "call-stack", "scope", "closures"] },
+            { id: "mod-2-int-2", order: 2, type: "interview-concept", text: "Hoisting (var vs. let vs. const) and the Temporal Dead Zone (TDZ).", tags: ["hoisting", "tdz", "variables"] },
+            { id: "mod-2-int-3", order: 3, type: "interview-concept", text: "The this keyword across regular functions, arrow functions, methods, and constructors.", tags: ["this-keyword", "functions"] },
+            { id: "mod-2-int-4", order: 4, type: "interview-concept", text: "Prototypal inheritance and the prototype chain.", tags: ["prototypes", "inheritance"] },
+            { id: "mod-2-int-5", order: 5, type: "interview-concept", text: "Shallow copy vs. deep copy, pass-by-value vs. pass-by-reference, and garbage collection / memory leaks.", tags: ["memory", "garbage-collection", "copying"] }
+          ]
+        },
+        {
+          id: "mod-3",
+          slug: "asynchronous-js-dom-browser-apis",
+          order: 3,
+          roman: "III",
+          deity: "Hermes • Async & DOM",
+          title: "Asynchronous JS, DOM & Browser APIs",
+          practice: [
+            { id: "mod-3-prac-1", order: 1, type: "practice", text: "Build a promise combinator suite from scratch: Promise.all, Promise.allSettled, Promise.race, Promise.any.", tags: ["promises", "combinators", "async"] },
+            { id: "mod-3-prac-2", order: 2, type: "practice", text: "Build an interactive list using event delegation (one listener on parent instead of 100 on children).", tags: ["dom", "event-delegation", "performance"] },
+            { id: "mod-3-prac-3", order: 3, type: "practice", text: "Implement request cancellation using AbortController when a user types rapidly in a search box.", tags: ["AbortController", "cancellation", "fetch"] },
+            { id: "mod-3-prac-4", order: 4, type: "practice", text: "Persist user preferences safely in localStorage with try/catch error handling.", tags: ["localStorage", "error-handling", "storage"] }
+          ],
+          interviewConcepts: [
+            { id: "mod-3-int-1", order: 1, type: "interview-concept", text: "The Event Loop: call stack, Web APIs, Microtask Queue (Promises, queueMicrotask), and Macrotask/Callback Queue (setTimeout, DOM events)—be ready to predict console output order.", tags: ["event-loop", "microtasks", "macrotasks", "async"] },
+            { id: "mod-3-int-2", order: 2, type: "interview-concept", text: "Event bubbling, capturing, e.preventDefault(), and e.stopPropagation().", tags: ["dom-events", "bubbling", "capturing"] },
+            { id: "mod-3-int-3", order: 3, type: "interview-concept", text: "localStorage vs. sessionStorage vs. Cookies (HttpOnly, Secure, SameSite).", tags: ["storage", "cookies", "security"] },
+            { id: "mod-3-int-4", order: 4, type: "interview-concept", text: "CORS (why browsers block cross-origin requests and what preflight OPTIONS requests do).", tags: ["cors", "http", "security"] }
+          ]
+        },
+        {
+          id: "mod-4",
+          slug: "typescript-for-production-frontend",
+          order: 4,
+          roman: "IV",
+          deity: "Themis • Type Safety",
+          title: "TypeScript for Production Frontend",
+          practice: [
+            { id: "mod-4-prac-1", order: 1, type: "practice", text: "Type component props, children (React.ReactNode), event handlers (React.ChangeEvent<HTMLInputElement>), and custom hooks.", tags: ["typescript", "react-types", "hooks"] },
+            { id: "mod-4-prac-2", order: 2, type: "practice", text: "Model API responses using interface and type, discriminated unions for UI states ({ status: 'loading' } | { status: 'error'; error: string } | { status: 'success'; data: User[] }), and generics (ApiResponse<T>).", tags: ["typescript", "discriminated-unions", "generics"] },
+            { id: "mod-4-prac-3", order: 3, type: "practice", text: "Replace any with unknown + type guards (typeof, in, custom isUser predicates).", tags: ["typescript", "type-guards", "unknown"] }
+          ],
+          interviewConcepts: [
+            { id: "mod-4-int-1", order: 1, type: "interview-concept", text: "type vs. interface (declaration merging, unions/intersections).", tags: ["typescript", "type-vs-interface"] },
+            { id: "mod-4-int-2", order: 2, type: "interview-concept", text: "any vs. unknown vs. never vs. void.", tags: ["typescript", "type-system"] },
+            { id: "mod-4-int-3", order: 3, type: "interview-concept", text: "Built-in utility types: Partial<T>, Pick<T, K>, Omit<T, K>, Record<K, V>, Required<T>, ReturnType<T>.", tags: ["typescript", "utility-types"] },
+            { id: "mod-4-int-4", order: 4, type: "interview-concept", text: "Type inference vs. explicit annotations.", tags: ["typescript", "type-inference"] }
+          ]
+        },
+        {
+          id: "mod-5",
+          slug: "react-core-to-react-19-machine-coding",
+          order: 5,
+          roman: "V",
+          deity: "Apollo • React 19",
+          title: "React (Core to React 19 & Machine Coding)",
+          practice: [
+            { id: "mod-5-prac-1", order: 1, type: "practice", text: "Debounced Typeahead / Autocomplete with keyboard navigation (ArrowUp/Down/Enter/Escape) and request cancellation.", tags: ["machine-coding", "typeahead", "keyboard-nav", "react"] },
+            { id: "mod-5-prac-2", order: 2, type: "practice", text: "Accessible Modal, Tabs, and Accordion components from scratch.", tags: ["machine-coding", "components", "a11y", "react"] },
+            { id: "mod-5-prac-3", order: 3, type: "practice", text: "Paginated & Sortable Data Table with client/server search and URL query sync (useSearchParams).", tags: ["machine-coding", "data-table", "url-state", "react"] },
+            { id: "mod-5-prac-4", order: 4, type: "practice", text: "Infinite Scroll Feed using IntersectionObserver.", tags: ["machine-coding", "infinite-scroll", "IntersectionObserver"] },
+            { id: "mod-5-prac-5", order: 5, type: "practice", text: "Custom Hooks: useDebounce, useFetch, useLocalStorage, useClickOutside.", tags: ["custom-hooks", "react"] }
+          ],
+          interviewConcepts: [
+            { id: "mod-5-int-1", order: 1, type: "interview-concept", text: "Virtual DOM, Reconciliation, Diffing algorithm, and why key props matter (and why array index as key breaks state).", tags: ["virtual-dom", "reconciliation", "keys", "react"] },
+            { id: "mod-5-int-2", order: 2, type: "interview-concept", text: "Hooks rules and internals: useState batching, useEffect lifecycle and cleanup functions, useRef (DOM access vs. mutable values without re-renders), useMemo, and useCallback (when they help vs. when they add overhead).", tags: ["hooks", "memoization", "lifecycle", "react"] },
+            { id: "mod-5-int-3", order: 3, type: "interview-concept", text: "Controlled vs. Uncontrolled components.", tags: ["forms", "controlled-vs-uncontrolled", "react"] },
+            { id: "mod-5-int-4", order: 4, type: "interview-concept", text: "Code splitting with React.lazy + Suspense, and catching crashes with Error Boundaries.", tags: ["code-splitting", "suspense", "error-boundaries", "react"] },
+            { id: "mod-5-int-5", order: 5, type: "interview-concept", text: "Modern React (React 19): useOptimistic, useActionState, use(), and ref passed directly as a prop without forwardRef.", tags: ["react-19", "useOptimistic", "useActionState", "use"] }
+          ]
+        },
+        {
+          id: "mod-6",
+          slug: "rest-apis-state-management-forms",
+          order: 6,
+          roman: "VI",
+          deity: "Poseidon • State & APIs",
+          title: "REST APIs, State Management & Forms",
+          practice: [
+            { id: "mod-6-prac-1", order: 1, type: "practice", text: "Build a typed API client wrapper (fetch or axios) with base URLs, auth token headers, and centralized HTTP error handling (401, 403, 404, 500).", tags: ["api-client", "http", "error-handling"] },
+            { id: "mod-6-prac-2", order: 2, type: "practice", text: "Manage server state with TanStack Query (caching, loading/error states, mutations, cache invalidation) and global client state with Redux Toolkit or Zustand.", tags: ["tanstack-query", "zustand", "redux-toolkit", "state-management"] },
+            { id: "mod-6-prac-3", order: 3, type: "practice", text: "Build a multi-step validated form using React Hook Form + Zod.", tags: ["react-hook-form", "zod", "forms", "validation"] }
+          ],
+          interviewConcepts: [
+            { id: "mod-6-int-1", order: 1, type: "interview-concept", text: "REST fundamentals: HTTP methods (GET, POST, PUT, PATCH, DELETE), idempotency, and status codes (200, 201, 204, 400, 401, 403, 404, 422, 429, 500).", tags: ["rest", "http-methods", "status-codes", "idempotency"] },
+            { id: "mod-6-int-2", order: 2, type: "interview-concept", text: "Client State vs. Server State (why putting API data in Redux manually is harder than using TanStack Query).", tags: ["client-state", "server-state", "tanstack-query"] },
+            { id: "mod-6-int-3", order: 3, type: "interview-concept", text: "Optimistic UI updates (updating the UI immediately before the server responds, and rolling back on error).", tags: ["optimistic-ui", "mutations", "ux"] },
+            { id: "mod-6-int-4", order: 4, type: "interview-concept", text: "JWT authentication flow on the frontend (access tokens, refresh tokens, protected routes).", tags: ["auth", "jwt", "refresh-tokens", "protected-routes"] }
+          ]
+        },
+        {
+          id: "mod-7",
+          slug: "nextjs-performance-web-security",
+          order: 7,
+          roman: "VII",
+          deity: "Zeus • Scale & Security",
+          title: "Next.js, Performance & Web Security",
+          practice: [
+            { id: "mod-7-prac-1", order: 1, type: "practice", text: "Build a Next.js App Router project with dynamic routes (/items/[id]), loading skeletons (loading.tsx), and error boundaries (error.tsx).", tags: ["nextjs", "app-router", "routing", "suspense"] },
+            { id: "mod-7-prac-2", order: 2, type: "practice", text: "Run Chrome Lighthouse on your deployed app and fix layout shifts, oversized images, and missing ARIA labels.", tags: ["lighthouse", "performance", "a11y", "images"] }
+          ],
+          interviewConcepts: [
+            { id: "mod-7-int-1", order: 1, type: "interview-concept", text: "CSR vs. SSR vs. SSG vs. ISR—when to choose each and their trade-offs for SEO and initial load speed.", tags: ["rendering-strategies", "ssr", "ssg", "isr", "csr", "seo"] },
+            { id: "mod-7-int-2", order: 2, type: "interview-concept", text: "Next.js App Router: Server Components vs. Client Components (\"use client\").", tags: ["nextjs", "rsc", "server-vs-client"] },
+            { id: "mod-7-int-3", order: 3, type: "interview-concept", text: "Core Web Vitals: LCP (Largest Contentful Paint), INP (Interaction to Next Paint), and CLS (Cumulative Layout Shift).", tags: ["core-web-vitals", "lcp", "inp", "cls", "performance"] },
+            { id: "mod-7-int-4", order: 4, type: "interview-concept", text: "Frontend Security: Preventing XSS (Cross-Site Scripting, sanitizing HTML) and CSRF (Cross-Site Request Forgery).", tags: ["security", "xss", "csrf"] }
+          ]
+        },
+        {
+          id: "mod-8",
+          slug: "git-testing-debugging",
+          order: 8,
+          roman: "VIII",
+          deity: "Prometheus • Testing",
+          title: "Git, Testing & Debugging",
+          practice: [
+            { id: "mod-8-prac-1", order: 1, type: "practice", text: "Use feature branches, clean conventional commits (feat:, fix:, refactor:), pull requests, and resolve merge conflicts cleanly.", tags: ["git", "workflow", "conventional-commits"] },
+            { id: "mod-8-prac-2", order: 2, type: "practice", text: "Write basic component tests with Vitest + React Testing Library (testing user interactions rather than internal implementation).", tags: ["testing", "vitest", "react-testing-library"] },
+            { id: "mod-8-prac-3", order: 3, type: "practice", text: "Use Chrome DevTools (Network tab waterfall, Performance flamegraph, React DevTools Profiler) to track down slow renders and failed API calls.", tags: ["devtools", "debugging", "profiling"] }
+          ],
+          interviewConcepts: []
+        }
+      ],
+      projects: [
+        {
+          id: "proj-1",
+          slug: "accessible-ui-component-kit-debounced-search-explorer",
+          order: 1,
+          labor: "Labor I",
+          title: "Accessible UI Component Kit & Debounced Search Explorer",
+          tier: "foundational",
+          tierLabel: "Foundational",
+          isFlagship: false,
+          fastTrackEligible: false,
+          summary: "A clean, zero-dependency React + TypeScript library of a Modal, Accordion, Tabs, Toast notifications, and an async typeahead search bar wired to a public API (like GitHub Users or OpenLibrary).",
+          skillsProven: ["Semantic HTML", "ARIA/keyboard accessibility", "Debouncing", "AbortController", "Custom hooks", "Responsive CSS/Tailwind"]
+        },
+        {
+          id: "proj-2",
+          slug: "ecommerce-storefront-url-synced-filters-cart",
+          order: 2,
+          labor: "Labor II",
+          title: "E-Commerce Storefront with URL-Synced Filters & Cart",
+          tier: "intermediate",
+          tierLabel: "Intermediate",
+          isFlagship: false,
+          fastTrackEligible: false,
+          summary: "A product catalog with multi-criteria filtering (category, price range, sort order) persisted in URL query parameters, persistent cart state, and optimistic quantity updates.",
+          skillsProven: ["Complex client state (Zustand or Redux Toolkit)", "URL state management", "Memoization", "Skeleton loaders", "Responsive grid layouts"]
+        },
+        {
+          id: "proj-3",
+          slug: "job-application-interview-pipeline-tracker",
+          order: 3,
+          labor: "Labor III",
+          title: "Job Application & Interview Pipeline Tracker",
+          tier: "flagship",
+          tierLabel: "Flagship — High Practical Value",
+          isFlagship: true,
+          fastTrackEligible: true,
+          summary: "A Kanban board + sortable table workspace for tracking job applications across stages (Applied, Screening, Machine Coding, Offer), complete with follow-up reminders, company notes, and a conversion rate analytics bar.",
+          skillsProven: ["Drag-and-drop state", "Optimistic updates", "React Hook Form + Zod validation", "Local/database persistence", "Clean dashboard UX"]
+        },
+        {
+          id: "proj-4",
+          slug: "incident-service-uptime-status-monitor",
+          order: 4,
+          labor: "Labor IV",
+          title: "Incident & Service Uptime Status Monitor",
+          tier: "flagship",
+          tierLabel: "Flagship — SaaS Ops",
+          isFlagship: true,
+          fastTrackEligible: true,
+          summary: "A real-time service monitoring dashboard where teams configure API endpoints, inspect response latency charts, log incident timelines, and view a public-facing status page.",
+          skillsProven: ["Data visualization", "TanStack Query polling & caching", "Role-based UI views", "TypeScript discriminated unions", "Handling empty/error/degraded states"]
+        },
+        {
+          id: "proj-5",
+          slug: "collaborative-api-webhook-sandbox",
+          order: 5,
+          labor: "Labor V",
+          title: "Collaborative API & Webhook Sandbox",
+          tier: "flagship",
+          tierLabel: "Flagship — Developer Tool",
+          isFlagship: true,
+          fastTrackEligible: true,
+          summary: "A developer utility to inspect incoming JSON/HTTP payloads, format and diff headers/bodies, save request collections, and replay requests with custom headers.",
+          skillsProven: ["Deep understanding of HTTP/REST internals", "Recursive JSON tree rendering", "Clipboard/keyboard shortcuts", "Senior-level engineering polish"]
+        }
+      ],
+      dsa: {
+        repoName: "frontend-dsa-50",
+        guidanceNote: "NCR frontend interviews rarely ask obscure graph theory, but they do test arrays, strings, hash maps, sliding windows, stacks, trees (DOM traversal), and JavaScript closures/promises.",
+        categories: [
+          { id: "dsa-cat-a", code: "A", order: 1, title: "Arrays, Strings & Hashing", expectedCount: 12 },
+          { id: "dsa-cat-b", code: "B", order: 2, title: "Two Pointers & Sliding Window", expectedCount: 8 },
+          { id: "dsa-cat-c", code: "C", order: 3, title: "Stack, Queue & Binary Search", expectedCount: 8 },
+          { id: "dsa-cat-d", code: "D", order: 4, title: "Linked Lists, Trees & Graphs — DOM & Nested UI Logic", expectedCount: 10 },
+          { id: "dsa-cat-e", code: "E", order: 5, title: "JavaScript-Specific & Frontend Utility Problems on LeetCode", expectedCount: 12 }
+        ],
+        problems: [
+          { id: "dsa-1", categoryId: "dsa-cat-a", categoryCode: "A", globalOrder: 1, leetcodeId: 1, title: "Two Sum", frontendRelevance: null },
+          { id: "dsa-2", categoryId: "dsa-cat-a", categoryCode: "A", globalOrder: 2, leetcodeId: 217, title: "Contains Duplicate", frontendRelevance: null },
+          { id: "dsa-3", categoryId: "dsa-cat-a", categoryCode: "A", globalOrder: 3, leetcodeId: 242, title: "Valid Anagram", frontendRelevance: null },
+          { id: "dsa-4", categoryId: "dsa-cat-a", categoryCode: "A", globalOrder: 4, leetcodeId: 49, title: "Group Anagrams", frontendRelevance: null },
+          { id: "dsa-5", categoryId: "dsa-cat-a", categoryCode: "A", globalOrder: 5, leetcodeId: 347, title: "Top K Frequent Elements", frontendRelevance: null },
+          { id: "dsa-6", categoryId: "dsa-cat-a", categoryCode: "A", globalOrder: 6, leetcodeId: 238, title: "Product of Array Except Self", frontendRelevance: null },
+          { id: "dsa-7", categoryId: "dsa-cat-a", categoryCode: "A", globalOrder: 7, leetcodeId: 128, title: "Longest Consecutive Sequence", frontendRelevance: null },
+          { id: "dsa-8", categoryId: "dsa-cat-a", categoryCode: "A", globalOrder: 8, leetcodeId: 53, title: "Maximum Subarray", frontendRelevance: null },
+          { id: "dsa-9", categoryId: "dsa-cat-a", categoryCode: "A", globalOrder: 9, leetcodeId: 56, title: "Merge Intervals", frontendRelevance: null },
+          { id: "dsa-10", categoryId: "dsa-cat-a", categoryCode: "A", globalOrder: 10, leetcodeId: 14, title: "Longest Common Prefix", frontendRelevance: null },
+          { id: "dsa-11", categoryId: "dsa-cat-a", categoryCode: "A", globalOrder: 11, leetcodeId: 387, title: "First Unique Character in a String", frontendRelevance: null },
+          { id: "dsa-12", categoryId: "dsa-cat-a", categoryCode: "A", globalOrder: 12, leetcodeId: 443, title: "String Compression", frontendRelevance: null },
+
+          { id: "dsa-13", categoryId: "dsa-cat-b", categoryCode: "B", globalOrder: 13, leetcodeId: 125, title: "Valid Palindrome", frontendRelevance: null },
+          { id: "dsa-14", categoryId: "dsa-cat-b", categoryCode: "B", globalOrder: 14, leetcodeId: 167, title: "Two Sum II - Input Array Is Sorted", frontendRelevance: null },
+          { id: "dsa-15", categoryId: "dsa-cat-b", categoryCode: "B", globalOrder: 15, leetcodeId: 15, title: "3Sum", frontendRelevance: null },
+          { id: "dsa-16", categoryId: "dsa-cat-b", categoryCode: "B", globalOrder: 16, leetcodeId: 11, title: "Container With Most Water", frontendRelevance: null },
+          { id: "dsa-17", categoryId: "dsa-cat-b", categoryCode: "B", globalOrder: 17, leetcodeId: 121, title: "Best Time to Buy and Sell Stock", frontendRelevance: null },
+          { id: "dsa-18", categoryId: "dsa-cat-b", categoryCode: "B", globalOrder: 18, leetcodeId: 3, title: "Longest Substring Without Repeating Characters", frontendRelevance: null },
+          { id: "dsa-19", categoryId: "dsa-cat-b", categoryCode: "B", globalOrder: 19, leetcodeId: 424, title: "Longest Repeating Character Replacement", frontendRelevance: null },
+          { id: "dsa-20", categoryId: "dsa-cat-b", categoryCode: "B", globalOrder: 20, leetcodeId: 209, title: "Minimum Size Subarray Sum", frontendRelevance: null },
+
+          { id: "dsa-21", categoryId: "dsa-cat-c", categoryCode: "C", globalOrder: 21, leetcodeId: 20, title: "Valid Parentheses", frontendRelevance: "classic HTML/JSX tag matching" },
+          { id: "dsa-22", categoryId: "dsa-cat-c", categoryCode: "C", globalOrder: 22, leetcodeId: 155, title: "Min Stack", frontendRelevance: null },
+          { id: "dsa-23", categoryId: "dsa-cat-c", categoryCode: "C", globalOrder: 23, leetcodeId: 739, title: "Daily Temperatures", frontendRelevance: "monotonic stack" },
+          { id: "dsa-24", categoryId: "dsa-cat-c", categoryCode: "C", globalOrder: 24, leetcodeId: 394, title: "Decode String", frontendRelevance: null },
+          { id: "dsa-25", categoryId: "dsa-cat-c", categoryCode: "C", globalOrder: 25, leetcodeId: 704, title: "Binary Search", frontendRelevance: null },
+          { id: "dsa-26", categoryId: "dsa-cat-c", categoryCode: "C", globalOrder: 26, leetcodeId: 33, title: "Search in Rotated Sorted Array", frontendRelevance: null },
+          { id: "dsa-27", categoryId: "dsa-cat-c", categoryCode: "C", globalOrder: 27, leetcodeId: 153, title: "Find Minimum in Rotated Sorted Array", frontendRelevance: null },
+          { id: "dsa-28", categoryId: "dsa-cat-c", categoryCode: "C", globalOrder: 28, leetcodeId: 875, title: "Koko Eating Bananas", frontendRelevance: null },
+
+          { id: "dsa-29", categoryId: "dsa-cat-d", categoryCode: "D", globalOrder: 29, leetcodeId: 206, title: "Reverse Linked List", frontendRelevance: null },
+          { id: "dsa-30", categoryId: "dsa-cat-d", categoryCode: "D", globalOrder: 30, leetcodeId: 21, title: "Merge Two Sorted Lists", frontendRelevance: null },
+          { id: "dsa-31", categoryId: "dsa-cat-d", categoryCode: "D", globalOrder: 31, leetcodeId: 141, title: "Linked List Cycle", frontendRelevance: null },
+          { id: "dsa-32", categoryId: "dsa-cat-d", categoryCode: "D", globalOrder: 32, leetcodeId: 146, title: "LRU Cache", frontendRelevance: "frequently asked in frontend caching rounds" },
+          { id: "dsa-33", categoryId: "dsa-cat-d", categoryCode: "D", globalOrder: 33, leetcodeId: 226, title: "Invert Binary Tree", frontendRelevance: null },
+          { id: "dsa-34", categoryId: "dsa-cat-d", categoryCode: "D", globalOrder: 34, leetcodeId: 104, title: "Maximum Depth of Binary Tree", frontendRelevance: "mirrors DOM tree depth" },
+          { id: "dsa-35", categoryId: "dsa-cat-d", categoryCode: "D", globalOrder: 35, leetcodeId: 102, title: "Binary Tree Level Order Traversal (BFS)", frontendRelevance: null },
+          { id: "dsa-36", categoryId: "dsa-cat-d", categoryCode: "D", globalOrder: 36, leetcodeId: 236, title: "Lowest Common Ancestor of a Binary Tree", frontendRelevance: "finding common parent DOM node" },
+          { id: "dsa-37", categoryId: "dsa-cat-d", categoryCode: "D", globalOrder: 37, leetcodeId: 200, title: "Number of Islands", frontendRelevance: "grid DFS/BFS" },
+          { id: "dsa-38", categoryId: "dsa-cat-d", categoryCode: "D", globalOrder: 38, leetcodeId: 207, title: "Course Schedule", frontendRelevance: "dependency resolution" },
+
+          { id: "dsa-39", categoryId: "dsa-cat-e", categoryCode: "E", globalOrder: 39, leetcodeId: 2620, title: "Counter", frontendRelevance: "closures" },
+          { id: "dsa-40", categoryId: "dsa-cat-e", categoryCode: "E", globalOrder: 40, leetcodeId: 2665, title: "Counter II", frontendRelevance: null },
+          { id: "dsa-41", categoryId: "dsa-cat-e", categoryCode: "E", globalOrder: 41, leetcodeId: 2635, title: "Apply Transform Over Each Element in Array", frontendRelevance: "Array.map polyfill" },
+          { id: "dsa-42", categoryId: "dsa-cat-e", categoryCode: "E", globalOrder: 42, leetcodeId: 2634, title: "Filter Elements from Array", frontendRelevance: "Array.filter polyfill" },
+          { id: "dsa-43", categoryId: "dsa-cat-e", categoryCode: "E", globalOrder: 43, leetcodeId: 2626, title: "Array Reduce Transformation", frontendRelevance: "Array.reduce polyfill" },
+          { id: "dsa-44", categoryId: "dsa-cat-e", categoryCode: "E", globalOrder: 44, leetcodeId: 2629, title: "Function Composition", frontendRelevance: null },
+          { id: "dsa-45", categoryId: "dsa-cat-e", categoryCode: "E", globalOrder: 45, leetcodeId: 2666, title: "Allow One Function Call", frontendRelevance: "once utility" },
+          { id: "dsa-46", categoryId: "dsa-cat-e", categoryCode: "E", globalOrder: 46, leetcodeId: 2623, title: "Memoize", frontendRelevance: "caching function results" },
+          { id: "dsa-47", categoryId: "dsa-cat-e", categoryCode: "E", globalOrder: 47, leetcodeId: 2723, title: "Add Two Promises", frontendRelevance: null },
+          { id: "dsa-48", categoryId: "dsa-cat-e", categoryCode: "E", globalOrder: 48, leetcodeId: 2637, title: "Promise Time Limit", frontendRelevance: "async timeout wrapper" },
+          { id: "dsa-49", categoryId: "dsa-cat-e", categoryCode: "E", globalOrder: 49, leetcodeId: 2627, title: "Debounce", frontendRelevance: "most-asked frontend utility" },
+          { id: "dsa-50", categoryId: "dsa-cat-e", categoryCode: "E", globalOrder: 50, leetcodeId: 2625, title: "Flatten Deeply Nested Array", frontendRelevance: "Array.flat recursion" }
+        ]
+      }
+    };
+
+    /**
+     * ============================================================================
+     * 2. STATE MANAGEMENT & PERSISTENCE
+     * ============================================================================
+     */
+    const STORAGE_KEY = 'apotheosis_state_v3';
+
+    const defaultState = {
+      activeView: 'sanctuary',
+      activeModuleFilter: 'all',
+      activePillarTypeFilter: 'all', // all | practice | interview-concept
+      activeProjectFilter: 'all',
+      activeDsaCategory: 'all',
+      activeDsaStatusFilter: 'all',
+      hideCompleted: false,
+      searchQuery: '',
+      defaultLanguage: 'TypeScript',
+      theme: 'light',
+      selectedItem: { kind: 'item', id: 'mod-1-prac-1' }, // Persistent desktop inspector selection
+      focusedIndex: 0,
+      items: {},
+      dsaProblems: {}
+    };
+
+    let appState = loadState();
+    let activeDrawerItem = null;
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('apotheosis_state_v2');
+        if (!raw) return structuredClone(defaultState);
+        const parsed = JSON.parse(raw);
+        return { ...structuredClone(defaultState), ...parsed };
+      } catch (e) {
+        return structuredClone(defaultState);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (e) {
+        showToast('Storage quota exceeded — progress kept in session.', 'warning');
+      }
+      updateGlobalTelemetry();
+    }
+
+    function getItemProgress(id) {
+      return appState.items[id] || { completed: false, completedAt: null, notes: '' };
+    }
+
+    function getDsaProgress(id) {
+      return appState.dsaProblems[id] || {
+        status: 'todo',
+        completedAt: null,
+        attempts: 0,
+        solutionLanguage: appState.defaultLanguage,
+        timeComplexity: '',
+        spaceComplexity: '',
+        notes: ''
+      };
+    }
+
+    /**
+     * ============================================================================
+     * 3. TELEMETRY & RANKING ENGINE
+     * ============================================================================
+     */
+    function computeTelemetry() {
+      let syllabusTotal = 0;
+      let syllabusDone = 0;
+      let practiceRem = 0;
+
+      CURRICULUM_DATA.syllabus.forEach(mod => {
+        mod.practice.forEach(p => {
+          syllabusTotal++;
+          if (getItemProgress(p.id).completed) syllabusDone++;
+          else practiceRem++;
+        });
+        mod.interviewConcepts.forEach(c => {
+          syllabusTotal++;
+          if (getItemProgress(c.id).completed) syllabusDone++;
+        });
+      });
+
+      const projectsTotal = CURRICULUM_DATA.projects.length;
+      let projectsDone = 0;
+      let flagshipRem = 0;
+      CURRICULUM_DATA.projects.forEach(proj => {
+        if (getItemProgress(proj.id).completed) projectsDone++;
+        else if (proj.isFlagship) flagshipRem++;
+      });
+
+      const dsaTotal = CURRICULUM_DATA.dsa.problems.length;
+      let dsaSolved = 0;
+      let dsaInProgress = 0;
+      CURRICULUM_DATA.dsa.problems.forEach(prob => {
+        const st = getDsaProgress(prob.id).status;
+        if (st === 'solved') dsaSolved++;
+        else if (st === 'in-progress') dsaInProgress++;
+      });
+
+      const totalTrials = syllabusTotal + projectsTotal + dsaTotal; // 108
+      const completedTrials = syllabusDone + projectsDone + dsaSolved;
+      const pct = totalTrials > 0 ? Math.round((completedTrials / totalTrials) * 100) : 0;
+
+      let rank = { roman: 'L1', title: 'Foundations', subtitle: 'HTML, CSS & Core JS' };
+      if (pct >= 100) rank = { roman: 'L6', title: 'Apotheosis', subtitle: 'Senior Frontend Ready' };
+      else if (pct >= 75) rank = { roman: 'L5', title: 'Production Ready', subtitle: 'Flagship Projects & Scale' };
+      else if (pct >= 50) rank = { roman: 'L4', title: 'System Builder', subtitle: 'React & State Architecture' };
+      else if (pct >= 25) rank = { roman: 'L3', title: 'Core Engineer', subtitle: 'JS Internals & TypeScript' };
+      else if (pct >= 10) rank = { roman: 'L2', title: 'Apprentice', subtitle: 'Responsive UI & DOM' };
+
+      return {
+        syllabusTotal, syllabusDone, practiceRem,
+        projectsTotal, projectsDone, flagshipRem,
+        dsaTotal, dsaSolved, dsaInProgress,
+        totalTrials, completedTrials, pct, rank
+      };
+    }
+
+    function updateGlobalTelemetry() {
+      const t = computeTelemetry();
+      document.getElementById('nav-overall-pct').textContent = `${t.pct}%`;
+      document.getElementById('nav-syllabus-count').textContent = `${t.syllabusDone}/${t.syllabusTotal}`;
+      document.getElementById('nav-projects-count').textContent = `${t.projectsDone}/${t.projectsTotal}`;
+      document.getElementById('nav-dsa-count').textContent = `${t.dsaSolved}/${t.dsaTotal}`;
+
+      document.getElementById('topbar-pct').textContent = `${t.pct}%`;
+      document.getElementById('topbar-trials').textContent = `${t.completedTrials}/${t.totalTrials}`;
+
+      document.getElementById('shortcut-practice-rem').textContent = t.practiceRem;
+      document.getElementById('shortcut-flagship-rem').textContent = t.flagshipRem;
+
+      document.getElementById('sidebar-rank-roman').textContent = t.rank.roman;
+      document.getElementById('sidebar-rank-title').textContent = t.rank.title;
+      document.getElementById('sidebar-progress-bar').style.width = `${t.pct}%`;
+      document.getElementById('sidebar-xp-text').textContent = `${t.completedTrials}/${t.totalTrials}`;
+    }
+
+    /**
+     * ============================================================================
+     * 4. UI UTILITIES
+     * ============================================================================
+     */
+    function showToast(message, type = 'gold') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const accent = type === 'success'
+        ? 'border-olympus-laurel text-olympus-laurel dark:text-emerald-300'
+        : 'border-olympus-gold text-stone-900 dark:text-stone-100';
+
+      toast.className = `pointer-events-auto flex items-center gap-2.5 px-3.5 py-2 rounded-lg bg-marble-50 dark:bg-marble-900 border ${accent} shadow-md text-xs font-medium max-w-xs`;
+      toast.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-olympus-gold shrink-0"></span><span>${escapeHtml(message)}</span>`;
+      container.appendChild(toast);
+
+      gsap.fromTo(toast, { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.2, ease: 'power2.out' });
+      setTimeout(() => {
+        gsap.to(toast, { opacity: 0, y: 6, duration: 0.18, onComplete: () => toast.remove() });
+      }, 2200);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function applyTheme(theme) {
+      const root = document.documentElement;
+      if (theme === 'dark') root.classList.add('dark');
+      else root.classList.remove('dark');
+      appState.theme = theme;
+      saveState();
+    }
+
+    /**
+     * ============================================================================
+     * 5. VIEW RENDERERS (High-Density, Zero-Waste Engineering UX)
+     * ============================================================================
+     */
+    function switchView(viewName) {
+      appState.activeView = viewName;
+      appState.focusedIndex = 0;
+      saveState();
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        const isActive = btn.dataset.view === viewName;
+        btn.className = isActive
+          ? 'nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all bg-olympus-gold/15 text-olympus-goldDark dark:text-olympus-goldLight'
+          : 'nav-btn w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-stone-600 dark:text-stone-400 hover:bg-stone-200/60 dark:hover:bg-stone-800/60 transition-all';
+      });
+
+      document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+        const isActive = btn.dataset.view === viewName;
+        btn.className = isActive
+          ? 'mobile-nav-btn flex flex-col items-center gap-0.5 py-1 px-3 rounded-lg text-olympus-goldDark dark:text-olympus-goldLight font-semibold'
+          : 'mobile-nav-btn flex flex-col items-center gap-0.5 py-1 px-3 rounded-lg text-stone-500 dark:text-stone-400 font-medium';
+      });
+
+      renderCurrentView();
+    }
+
+    function quickJump(preset) {
+      clearGlobalSearch();
+      if (preset === 'remaining-practice') {
+        appState.activeModuleFilter = 'all';
+        appState.activePillarTypeFilter = 'practice';
+        appState.hideCompleted = true;
+        updateHideCompletedBtn();
+        switchView('pillars');
+      } else if (preset === 'flagships') {
+        appState.activeProjectFilter = 'flagship';
+        switchView('labors');
+      } else if (preset === 'frontend-dsa') {
+        appState.activeDsaCategory = 'all';
+        appState.activeDsaStatusFilter = 'relevance';
+        switchView('agora');
+      }
+    }
+
+    function updateHideCompletedBtn() {
+      const btn = document.getElementById('hide-completed-toggle');
+      const label = document.getElementById('hide-completed-label');
+      if (appState.hideCompleted) {
+        btn.className = 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-olympus-gold/15 border border-olympus-gold text-olympus-goldDark dark:text-olympus-goldLight transition-colors';
+        label.textContent = 'Hiding Done';
+      } else {
+        btn.className = 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-marble-100 dark:bg-marble-900 border border-stone-200 dark:border-stone-800 hover:border-olympus-gold text-stone-600 dark:text-stone-300 transition-colors';
+        label.textContent = 'Hide Done';
+      }
+    }
+
+    function renderCurrentView() {
+      const viewport = document.getElementById('app-viewport');
+      const query = appState.searchQuery.trim().toLowerCase();
+
+      if (query.length > 0) {
+        viewport.innerHTML = renderSearchResultsView(query);
+      } else {
+        switch (appState.activeView) {
+          case 'pillars':
+            viewport.innerHTML = renderPillarsView();
+            break;
+          case 'labors':
+            viewport.innerHTML = renderLaborsView();
+            break;
+          case 'agora':
+            viewport.innerHTML = renderAgoraView();
+            break;
+          case 'sanctuary':
+          default:
+            viewport.innerHTML = renderSanctuaryView();
+            break;
+        }
+      }
+
+      renderDesktopInspector();
+      gsap.fromTo('.gsap-card', { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.22, stagger: 0.025, ease: 'power1.out', clearProps: 'transform' });
+    }
+
+    /**
+     * ----------------------------------------------------------------------------
+     * VIEW A: THE SANCTUARY (Actionable Executive Overview — Zero Fluff)
+     * ----------------------------------------------------------------------------
+     */
+    function renderSanctuaryView() {
+      const t = computeTelemetry();
+      const radius = 44;
+      const circumference = 2 * Math.PI * radius;
+      const strokeOffset = circumference - (t.pct / 100) * circumference;
+
+      // Next 4 immediate uncompleted practice tasks
+      const nextPractices = [];
+      for (const mod of CURRICULUM_DATA.syllabus) {
+        for (const item of mod.practice) {
+          if (!getItemProgress(item.id).completed) {
+            nextPractices.push({ mod, item });
+            if (nextPractices.length >= 4) break;
+          }
+        }
+        if (nextPractices.length >= 4) break;
+      }
+
+      // Next 4 high-relevance frontend algorithms not yet solved
+      const nextDsas = CURRICULUM_DATA.dsa.problems
+        .filter(p => p.frontendRelevance && getDsaProgress(p.id).status !== 'solved')
+        .slice(0, 4);
+
+      return `
+        <div class="space-y-4">
+          <!-- Minimal Executive Summary Card -->
+          <section class="gsap-card rounded-2xl bg-white dark:bg-marble-900 border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 shadow-temple dark:shadow-temple-dark">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+              <div class="space-y-2.5 max-w-2xl">
+                <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-md bg-olympus-aegean/10 dark:bg-blue-500/15 text-olympus-aegean dark:text-olympus-aegeanLight text-xs font-mono font-semibold">
+                  <span>${t.rank.roman}</span>
+                  <span>•</span>
+                  <span>${escapeHtml(t.rank.title)}</span>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
+                  0-to-Hero Frontend Engineering Curriculum
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Target Role: <strong class="text-slate-800 dark:text-slate-200 font-semibold">${escapeHtml(CURRICULUM_DATA.meta.targetRole)}</strong>. 
+                  8 modules, 5 portfolio projects, and 50 curated frontend algorithms.
+                </p>
+                <div class="pt-1.5 flex flex-wrap gap-2.5">
+                  <button onclick="switchView('pillars')" class="px-4 py-2 rounded-lg bg-olympus-aegean hover:bg-blue-800 text-white text-xs sm:text-sm font-semibold transition-all flex items-center gap-2">
+                    <span>Open Modules</span>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                  </button>
+                  <button onclick="switchView('agora')" class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200/70 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-semibold transition-all">
+                    Frontend DSA 50
+                  </button>
+                </div>
+              </div>
+
+              <!-- Radial Progress Meter -->
+              <div class="flex items-center gap-4 bg-marble-50 dark:bg-marble-950/70 p-4 rounded-xl border border-slate-200/80 dark:border-slate-800 shrink-0">
+                <div class="relative w-24 h-24 flex items-center justify-center">
+                  <svg class="w-24 h-24 -rotate-90" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="44" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-200 dark:text-slate-800" />
+                    <circle cx="50" cy="50" r="44" stroke="url(#goldGrad)" stroke-width="8" stroke-linecap="round" fill="transparent"
+                      stroke-dasharray="${circumference}" stroke-dashoffset="${strokeOffset}" class="transition-all duration-700 ease-out" />
+                    <defs>
+                      <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#1D4ED8" />
+                        <stop offset="100%" stop-color="#F59E0B" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span class="font-bold text-xl text-slate-900 dark:text-white">${t.pct}%</span>
+                    <span class="text-[10px] uppercase tracking-wider text-slate-400">Complete</span>
+                  </div>
+                </div>
+                <div class="space-y-0.5">
+                  <div class="text-xs text-slate-500 dark:text-slate-400">Completed</div>
+                  <div class="font-bold text-lg text-slate-900 dark:text-white">${t.completedTrials} <span class="text-xs font-normal text-slate-400">/ ${t.totalTrials}</span></div>
+                  <div class="text-xs text-olympus-aegean dark:text-olympus-aegeanLight font-medium">${escapeHtml(t.rank.subtitle)}</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Immediate Action Queue (2-Column Execution Panel) -->
+          <section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <!-- Queue 1: Next Hands-On Practice Tasks -->
+            <div class="gsap-card rounded-2xl bg-white dark:bg-marble-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-temple dark:shadow-temple-dark">
+              <div class="px-4 py-2.5 bg-marble-100/70 dark:bg-slate-900/70 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <span class="text-xs font-semibold text-slate-900 dark:text-white">Up Next — Practice Tasks</span>
+                <button onclick="switchView('pillars')" class="text-[11px] font-semibold text-olympus-aegean dark:text-olympus-aegeanLight hover:underline">All 26 →</button>
+              </div>
+              <div class="divide-y divide-slate-100 dark:divide-slate-800/80">
+                ${nextPractices.length === 0 ? `<div class="p-4 text-xs text-olympus-laurel font-medium">All 26 practice tasks completed!</div>` : nextPractices.map(({ mod, item }) => `
+                  <div onclick="selectInspectorItem('item', '${item.id}')" class="cursor-pointer px-4 py-2.5 hover:bg-marble-50 dark:hover:bg-slate-800/40 flex items-start gap-2.5 transition-colors">
+                    <button onclick="event.stopPropagation(); toggleItemCompletion('${item.id}')" aria-label="Complete task" class="mt-0.5 w-4 h-4 rounded border border-slate-300 dark:border-slate-600 hover:border-olympus-aegean shrink-0 bg-white dark:bg-slate-900"></button>
+                    <div class="min-w-0 flex-1">
+                      <div class="text-[10px] font-mono text-slate-400">Module ${mod.order} • ${item.tags.slice(0, 2).join(', ')}</div>
+                      <p class="text-xs text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mt-0.5">${escapeHtml(item.text)}</p>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Queue 2: High-Relevance Frontend Algorithms -->
+            <div class="gsap-card rounded-2xl bg-white dark:bg-marble-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-temple dark:shadow-temple-dark">
+              <div class="px-4 py-2.5 bg-marble-100/70 dark:bg-slate-900/70 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <span class="text-xs font-semibold text-slate-900 dark:text-white">Up Next — Frontend DSA</span>
+                <button onclick="quickJump('frontend-dsa')" class="text-[11px] font-semibold text-olympus-aegean dark:text-olympus-aegeanLight hover:underline">All FE DSA →</button>
+              </div>
+              <div class="divide-y divide-slate-100 dark:divide-slate-800/80">
+                ${nextDsas.length === 0 ? `<div class="p-4 text-xs text-olympus-laurel font-medium">All frontend-tagged algorithms solved!</div>` : nextDsas.map(prob => {
+                  const st = getDsaProgress(prob.id).status;
+                  return `
+                    <div onclick="selectInspectorItem('dsa', '${prob.id}')" class="cursor-pointer px-4 py-2.5 hover:bg-marble-50 dark:hover:bg-slate-800/40 flex items-center justify-between gap-2 transition-colors">
+                      <div class="min-w-0">
+                        <div class="flex items-center gap-1.5">
+                          <span class="text-[10px] font-mono text-slate-400">#${prob.leetcodeId}</span>
+                          <span class="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate">${escapeHtml(prob.title)}</span>
+                        </div>
+                        <div class="text-[11px] text-olympus-aegean dark:text-olympus-aegeanLight truncate">${escapeHtml(prob.frontendRelevance)}</div>
+                      </div>
+                      <button onclick="event.stopPropagation(); cycleDsaStatus('${prob.id}')" class="shrink-0 px-2 py-1 rounded text-[11px] font-mono font-semibold border ${st === 'in-progress' ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'}">
+                        ${st === 'in-progress' ? 'Active' : 'Todo'}
+                      </button>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          </section>
+
+          <!-- Compact 8-Module Progress Matrix -->
+          <section class="gsap-card rounded-2xl bg-white dark:bg-marble-900 border border-slate-200 dark:border-slate-800 p-4 shadow-temple dark:shadow-temple-dark">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white">Syllabus Modules</h3>
+              <span class="text-[11px] text-slate-400">Select module to filter</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+              ${CURRICULUM_DATA.syllabus.map(mod => {
+                const items = [...mod.practice, ...mod.interviewConcepts];
+                const done = items.filter(i => getItemProgress(i.id).completed).length;
+                const modPct = Math.round((done / items.length) * 100);
+                return `
+                  <button onclick="jumpToPillar('${mod.id}')" class="text-left p-3 rounded-xl bg-marble-50 dark:bg-marble-950/60 border border-slate-200/80 dark:border-slate-800 hover:border-olympus-aegean transition-all">
+                    <div class="flex items-center justify-between text-[11px] font-mono mb-1">
+                      <span class="font-bold text-olympus-aegean dark:text-olympus-aegeanLight">MOD 0${mod.order}</span>
+                      <span class="text-slate-500">${done}/${items.length}</span>
+                    </div>
+                    <div class="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate mb-2">${escapeHtml(mod.title)}</div>
+                    <div class="w-full bg-slate-200/70 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
+                      <div class="bg-olympus-aegean dark:bg-olympus-aegeanLight h-full rounded-full" style="width: ${modPct}%"></div>
+                    </div>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          </section>
+        </div>
+      `;
+    }
+
+    /**
+     * ----------------------------------------------------------------------------
+     * VIEW B: SYLLABUS MODULES (High-Density Scannable Checklist + Bulk Action)
+     * ----------------------------------------------------------------------------
+     */
+    function renderPillarsView() {
+      const filterMod = appState.activeModuleFilter;
+      const typeFilter = appState.activePillarTypeFilter;
+      const modulesToRender = filterMod === 'all'
+        ? CURRICULUM_DATA.syllabus
+        : CURRICULUM_DATA.syllabus.filter(m => m.id === filterMod);
+
+      let flatIndex = 0;
+
+      return `
+        <div class="space-y-4">
+          <!-- Compact Filter & Type Bar -->
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+              <button onclick="setModuleFilter('all')" class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${filterMod === 'all' ? 'bg-olympus-aegean text-white' : 'bg-white dark:bg-marble-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800'}">
+                All Modules
+              </button>
+              ${CURRICULUM_DATA.syllabus.map(mod => `
+                <button onclick="setModuleFilter('${mod.id}')" class="shrink-0 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${filterMod === mod.id ? 'bg-olympus-aegean text-white' : 'bg-white dark:bg-marble-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800'}">
+                  ${mod.order}. ${escapeHtml(mod.title.split(' ')[0].replace(',', ''))}
+                </button>
+              `).join('')}
+            </div>
+
+            <!-- Type Filter Segmented Control -->
+            <div class="inline-flex p-0.5 rounded-lg bg-marble-200/70 dark:bg-marble-900 border border-slate-200 dark:border-slate-800">
+              <button onclick="setPillarTypeFilter('all')" class="px-2.5 py-1 rounded-md text-[11px] font-semibold ${typeFilter === 'all' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-500'}">All</button>
+              <button onclick="setPillarTypeFilter('practice')" class="px-2.5 py-1 rounded-md text-[11px] font-semibold ${typeFilter === 'practice' ? 'bg-white dark:bg-slate-800 text-olympus-aegean dark:text-olympus-aegeanLight shadow-2xs' : 'text-slate-500'}">Practice (26)</button>
+              <button onclick="setPillarTypeFilter('interview-concept')" class="px-2.5 py-1 rounded-md text-[11px] font-semibold ${typeFilter === 'interview-concept' ? 'bg-white dark:bg-slate-800 text-olympus-goldDark dark:text-amber-400 shadow-2xs' : 'text-slate-500'}">Concepts (27)</button>
+            </div>
+          </div>
+
+          <!-- Compact Module Lists -->
+          <div class="space-y-4">
+            ${modulesToRender.map(mod => {
+              let items = [];
+              if (typeFilter === 'all' || typeFilter === 'practice') items.push(...mod.practice);
+              if (typeFilter === 'all' || typeFilter === 'interview-concept') items.push(...mod.interviewConcepts);
+
+              const totalInMod = items.length;
+              const doneInMod = items.filter(i => getItemProgress(i.id).completed).length;
+              if (appState.hideCompleted) {
+                items = items.filter(i => !getItemProgress(i.id).completed);
+              }
+              if (items.length === 0 && appState.hideCompleted) return '';
+
+              return `
+                <section class="gsap-card rounded-2xl bg-white dark:bg-marble-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-temple dark:shadow-temple-dark">
+                  <div class="px-4 py-2.5 bg-marble-100/70 dark:bg-slate-900/70 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="font-mono font-bold text-xs text-olympus-aegean dark:text-olympus-aegeanLight shrink-0">0${mod.order}</span>
+                      <h3 class="font-semibold text-sm text-slate-900 dark:text-white truncate">${escapeHtml(mod.title)}</h3>
+                    </div>
+                    <div class="flex items-center gap-2.5 shrink-0">
+                      <span class="text-xs font-mono text-slate-500">${doneInMod}/${totalInMod}</span>
+                      ${doneInMod < totalInMod ? `
+                        <button onclick="completeModuleBatch('${mod.id}')" title="Mark all items in Module ${mod.order} complete" class="text-[11px] font-semibold px-2 py-0.5 rounded bg-olympus-aegean/10 hover:bg-olympus-aegean text-olympus-aegean dark:text-olympus-aegeanLight hover:text-white transition-colors">
+                          Complete All
+                        </button>
+                      ` : `<span class="text-[11px] font-mono text-olympus-laurel dark:text-emerald-400 font-bold">✓ Done</span>`}
+                    </div>
+                  </div>
+
+                  <div class="divide-y divide-slate-100 dark:divide-slate-800/80">
+                    ${items.map(item => renderCompactChecklistRow(item, flatIndex++)).join('')}
+                  </div>
+                </section>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCompactChecklistRow(item, rowIndex) {
+      const prog = getItemProgress(item.id);
+      const hasNotes = prog.notes && prog.notes.trim().length > 0;
+      const isSelected = appState.selectedItem?.id === item.id;
+      const isFocused = appState.focusedIndex === rowIndex;
+      const isPractice = item.type === 'practice';
+
+      return `
+        <div
+          data-nav-row="${rowIndex}"
+          data-item-kind="item"
+          data-item-id="${item.id}"
+          onclick="selectInspectorItem('item', '${item.id}', ${rowIndex})"
+          class="cursor-pointer px-4 py-2.5 flex items-start gap-3 transition-colors ${isSelected ? 'bg-olympus-gold/10 dark:bg-olympus-gold/15' : 'hover:bg-marble-50 dark:hover:bg-stone-800/40'} ${isFocused ? 'ring-1 ring-inset ring-olympus-gold/60' : ''}">
+          
+          <button
+            onclick="event.stopPropagation(); toggleItemCompletion('${item.id}')"
+            aria-label="Toggle completion"
+            class="mt-0.5 w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-all ${prog.completed
+              ? 'bg-olympus-laurel border-olympus-laurel text-white'
+              : 'border-stone-300 dark:border-stone-600 hover:border-olympus-gold bg-white dark:bg-stone-900'}">
+            ${prog.completed ? '<svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
+          </button>
+
+          <div class="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="shrink-0 text-[10px] font-mono uppercase px-1.5 py-0.2 rounded ${isPractice
+                  ? 'bg-olympus-aegean/10 text-olympus-aegean dark:text-olympus-aegeanLight'
+                  : 'bg-olympus-terracotta/10 text-olympus-terracotta dark:text-amber-400'}">
+                  ${isPractice ? 'PRAC' : 'CONCEPT'}
+                </span>
+                <p class="text-xs sm:text-sm leading-snug ${prog.completed ? 'line-through text-stone-400 dark:text-stone-500' : 'text-stone-800 dark:text-stone-200'}">
+                  ${escapeHtml(item.text)}
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-1.5 shrink-0 pl-6 sm:pl-0">
+              ${item.tags.slice(0, 2).map(t => `<span class="hidden md:inline-block text-[10px] font-mono px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-500">${escapeHtml(t)}</span>`).join('')}
+              <span class="text-[11px] font-mono px-1.5 py-0.5 rounded ${hasNotes ? 'bg-olympus-gold/20 text-olympus-goldDark dark:text-olympus-goldLight font-semibold' : 'text-stone-400'}">
+                ${hasNotes ? '✎' : '+'}
+              </span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /**
+     * ----------------------------------------------------------------------------
+     * VIEW C: PORTFOLIO PROJECTS (Compact Cards with Direct Inspector Sync)
+     * ----------------------------------------------------------------------------
+     */
+    function renderLaborsView() {
+      const filter = appState.activeProjectFilter;
+      let projects = filter === 'flagship'
+        ? CURRICULUM_DATA.projects.filter(p => p.isFlagship)
+        : CURRICULUM_DATA.projects;
+
+      if (appState.hideCompleted) {
+        projects = projects.filter(p => !getItemProgress(p.id).completed);
+      }
+
+      return `
+        <div class="space-y-4">
+          <div class="flex items-center justify-between gap-2">
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white">Portfolio Projects</h2>
+            <div class="inline-flex p-0.5 rounded-lg bg-marble-200/70 dark:bg-marble-900 border border-slate-200 dark:border-slate-800">
+              <button onclick="setProjectFilter('all')" class="px-3 py-1 rounded-md text-xs font-semibold ${filter === 'all' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-2xs' : 'text-slate-500'}">All (5)</button>
+              <button onclick="setProjectFilter('flagship')" class="px-3 py-1 rounded-md text-xs font-semibold ${filter === 'flagship' ? 'bg-olympus-aegean text-white shadow-2xs' : 'text-slate-500'}">Flagships (3)</button>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            ${projects.map((proj, idx) => {
+              const prog = getItemProgress(proj.id);
+              const isSelected = appState.selectedItem?.id === proj.id;
+              return `
+                <article
+                  data-nav-row="${idx}"
+                  data-item-kind="project"
+                  data-item-id="${proj.id}"
+                  onclick="selectInspectorItem('project', '${proj.id}', ${idx})"
+                  class="gsap-card cursor-pointer rounded-2xl bg-white dark:bg-marble-900 border ${isSelected ? 'border-olympus-aegean ring-1 ring-olympus-aegean/40' : 'border-slate-200 dark:border-slate-800 hover:border-olympus-aegean/60'} p-4 shadow-temple dark:shadow-temple-dark transition-all">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="space-y-1.5 min-w-0">
+                      <div class="flex flex-wrap items-center gap-2">
+                        <span class="font-mono font-bold text-xs text-olympus-aegean dark:text-olympus-aegeanLight">0${proj.order}</span>
+                        <span class="text-[11px] font-mono px-2 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">${escapeHtml(proj.tierLabel)}</span>
+                      </div>
+                      <h3 class="font-bold text-base text-slate-900 dark:text-white">${escapeHtml(proj.title)}</h3>
+                      <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${escapeHtml(proj.summary)}</p>
+                      <div class="flex flex-wrap gap-1 pt-1">
+                        ${proj.skillsProven.map(s => `<span class="text-[10px] font-mono px-2 py-0.5 rounded bg-marble-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">${escapeHtml(s)}</span>`).join('')}
+                      </div>
+                    </div>
+
+                    <button onclick="event.stopPropagation(); toggleItemCompletion('${proj.id}')" class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${prog.completed ? 'bg-olympus-laurel text-white' : 'bg-olympus-aegean/10 hover:bg-olympus-aegean text-olympus-aegean dark:text-olympus-aegeanLight hover:text-white'}">
+                      ${prog.completed ? '✓ Built' : 'Mark Built'}
+                    </button>
+                  </div>
+                </article>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    /**
+     * ----------------------------------------------------------------------------
+     * VIEW D: AGORA OF ALGORITHMS (High-Speed Keyboard & Click DSA 50 Table)
+     * ----------------------------------------------------------------------------
+     */
+    function renderAgoraView() {
+      const catFilter = appState.activeDsaCategory;
+      const statusFilter = appState.activeDsaStatusFilter;
+
+      let problems = CURRICULUM_DATA.dsa.problems;
+      if (catFilter !== 'all') problems = problems.filter(p => p.categoryId === catFilter);
+      if (statusFilter === 'relevance') problems = problems.filter(p => Boolean(p.frontendRelevance));
+      else if (statusFilter !== 'all') problems = problems.filter(p => getDsaProgress(p.id).status === statusFilter);
+      if (appState.hideCompleted) problems = problems.filter(p => getDsaProgress(p.id).status !== 'solved');
+
+      return `
+        <div class="space-y-3">
+          <!-- Compact Filter Toolbar -->
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+              <button onclick="setDsaCategory('all')" class="shrink-0 px-2.5 py-1.5 rounded-lg text-xs font-semibold ${catFilter === 'all' ? 'bg-olympus-gold text-white' : 'bg-white dark:bg-marble-900 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-800'}">
+                All (50)
+              </button>
+              ${CURRICULUM_DATA.dsa.categories.map(cat => {
+                const catProbs = CURRICULUM_DATA.dsa.problems.filter(p => p.categoryId === cat.id);
+                const solved = catProbs.filter(p => getDsaProgress(p.id).status === 'solved').length;
+                return `
+                  <button onclick="setDsaCategory('${cat.id}')" class="shrink-0 px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 ${catFilter === cat.id ? 'bg-olympus-gold text-white' : 'bg-white dark:bg-marble-900 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-800'}">
+                    <span>${cat.code}. ${escapeHtml(cat.title.split(',')[0].split('—')[0].trim())}</span>
+                    <span class="font-mono text-[10px] opacity-80">${solved}/${cat.expectedCount}</span>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+
+            <div class="flex items-center gap-1">
+              ${[
+                { id: 'all', label: 'All' },
+                { id: 'relevance', label: '★ FE' },
+                { id: 'todo', label: 'Todo' },
+                { id: 'in-progress', label: 'Active' },
+                { id: 'solved', label: 'Solved' }
+              ].map(st => `
+                <button onclick="setDsaStatusFilter('${st.id}')" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold ${statusFilter === st.id ? 'bg-stone-900 dark:bg-olympus-gold text-white' : 'bg-white dark:bg-marble-900 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-800'}">
+                  ${st.label}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Dense Data Table -->
+          <div class="gsap-card rounded-2xl bg-white dark:bg-marble-900 border border-stone-200 dark:border-stone-800 overflow-hidden shadow-temple dark:shadow-temple-dark">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-stone-200 dark:border-stone-800 bg-marble-100/70 dark:bg-stone-900/80 text-[10px] font-mono uppercase tracking-wider text-stone-500">
+                    <th class="py-2.5 px-3 w-24">State</th>
+                    <th class="py-2.5 px-2 w-20">LC #</th>
+                    <th class="py-2.5 px-3">Problem & FE Signal</th>
+                    <th class="py-2.5 px-3 hidden sm:table-cell w-36">Big-O</th>
+                    <th class="py-2.5 px-3 text-right w-14">Note</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-stone-100 dark:divide-stone-800/80 text-xs sm:text-sm">
+                  ${problems.map((prob, idx) => {
+                    const prog = getDsaProgress(prob.id);
+                    const isSelected = appState.selectedItem?.id === prob.id;
+                    const statusConfig = {
+                      'todo': { label: 'Todo', cls: 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 border-stone-200 dark:border-stone-700' },
+                      'in-progress': { label: 'Active', cls: 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30' },
+                      'solved': { label: 'Solved', cls: 'bg-olympus-laurel/15 text-olympus-laurel dark:text-emerald-300 border-olympus-laurel/30' }
+                    }[prog.status];
+
+                    return `
+                      <tr
+                        data-nav-row="${idx}"
+                        data-item-kind="dsa"
+                        data-item-id="${prob.id}"
+                        onclick="selectInspectorItem('dsa', '${prob.id}', ${idx})"
+                        class="cursor-pointer transition-colors ${isSelected ? 'bg-olympus-gold/10 dark:bg-olympus-gold/15' : 'hover:bg-marble-50 dark:hover:bg-stone-800/40'}">
+                        <td class="py-2 px-3 whitespace-nowrap">
+                          <button onclick="event.stopPropagation(); cycleDsaStatus('${prob.id}')" class="px-2 py-0.5 rounded text-[11px] font-mono font-semibold border transition-all ${statusConfig.cls}">
+                            ${statusConfig.label}
+                          </button>
+                        </td>
+                        <td class="py-2 px-2 font-mono text-xs text-stone-500 whitespace-nowrap">
+                          <span class="text-[10px] px-1 rounded bg-stone-100 dark:bg-stone-800 mr-1">${prob.categoryCode}</span>#${prob.leetcodeId}
+                        </td>
+                        <td class="py-2 px-3">
+                          <span class="font-semibold text-stone-900 dark:text-stone-100 ${prog.status === 'solved' ? 'line-through opacity-65' : ''}">${escapeHtml(prob.title)}</span>
+                          ${prob.frontendRelevance ? `<span class="ml-2 text-[11px] text-olympus-goldDark dark:text-olympus-goldLight">★ ${escapeHtml(prob.frontendRelevance)}</span>` : ''}
+                        </td>
+                        <td class="py-2 px-3 hidden sm:table-cell font-mono text-[11px] text-stone-500 whitespace-nowrap">
+                          ${prog.timeComplexity || prog.spaceComplexity
+                            ? `${escapeHtml(prog.timeComplexity || '—')} / ${escapeHtml(prog.spaceComplexity || '—')}`
+                            : `<span class="opacity-45">${escapeHtml(prog.solutionLanguage)}</span>`}
+                        </td>
+                        <td class="py-2 px-3 text-right font-mono text-xs">
+                          <span class="${prog.notes ? 'text-olympus-goldDark dark:text-olympus-goldLight font-bold' : 'text-stone-400'}">${prog.notes ? '✎' : '+'}</span>
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /**
+     * ----------------------------------------------------------------------------
+     * VIEW E: UNIFIED INSTANT SEARCH
+     * ----------------------------------------------------------------------------
+     */
+    function renderSearchResultsView(query) {
+      const matchedSyllabus = [];
+      CURRICULUM_DATA.syllabus.forEach(mod => {
+        [...mod.practice, ...mod.interviewConcepts].forEach(item => {
+          if (`${item.text} ${item.tags.join(' ')} ${mod.title}`.toLowerCase().includes(query)) {
+            matchedSyllabus.push({ mod, item });
+          }
+        });
+      });
+
+      const matchedProjects = CURRICULUM_DATA.projects.filter(p =>
+        `${p.title} ${p.summary} ${p.skillsProven.join(' ')}`.toLowerCase().includes(query)
+      );
+
+      const matchedDsa = CURRICULUM_DATA.dsa.problems.filter(p =>
+        `${p.title} ${p.leetcodeId} ${p.frontendRelevance || ''} ${p.categoryCode}`.toLowerCase().includes(query)
+      );
+
+      const total = matchedSyllabus.length + matchedProjects.length + matchedDsa.length;
+      let idx = 0;
+
+      return `
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="font-display text-base font-bold text-stone-900 dark:text-white">
+              ${total} Match${total === 1 ? '' : 'es'} for “${escapeHtml(appState.searchQuery)}”
+            </h2>
+            <button onclick="clearGlobalSearch()" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-stone-200/80 dark:bg-stone-800">Clear (Esc)</button>
+          </div>
+
+          ${matchedSyllabus.length > 0 ? `
+            <div class="rounded-2xl bg-white dark:bg-marble-900 border border-stone-200 dark:border-stone-800 overflow-hidden">
+              <div class="px-4 py-2 bg-marble-100/70 dark:bg-stone-900/70 border-b border-stone-200 dark:border-stone-800 text-xs font-mono font-semibold">VIII Pillars (${matchedSyllabus.length})</div>
+              <div class="divide-y divide-stone-100 dark:divide-stone-800">
+                ${matchedSyllabus.map(({ item }) => renderCompactChecklistRow(item, idx++)).join('')}
+              </div>
+            </div>
+          ` : ''}
+
+          ${matchedDsa.length > 0 ? `
+            <div class="rounded-2xl bg-white dark:bg-marble-900 border border-stone-200 dark:border-stone-800 overflow-hidden">
+              <div class="px-4 py-2 bg-marble-100/70 dark:bg-stone-900/70 border-b border-stone-200 dark:border-stone-800 text-xs font-mono font-semibold">DSA 50 (${matchedDsa.length})</div>
+              <div class="divide-y divide-stone-100 dark:divide-stone-800">
+                ${matchedDsa.map(prob => {
+                  const prog = getDsaProgress(prob.id);
+                  return `
+                    <div onclick="selectInspectorItem('dsa', '${prob.id}')" class="cursor-pointer px-4 py-2.5 hover:bg-marble-50 dark:hover:bg-stone-800/40 flex items-center justify-between gap-2 text-xs">
+                      <div>
+                        <span class="font-mono text-stone-400 mr-1.5">#${prob.leetcodeId}</span>
+                        <span class="font-semibold">${escapeHtml(prob.title)}</span>
+                        ${prob.frontendRelevance ? `<span class="ml-2 text-olympus-goldDark dark:text-olympus-goldLight">★ ${escapeHtml(prob.frontendRelevance)}</span>` : ''}
+                      </div>
+                      <button onclick="event.stopPropagation(); cycleDsaStatus('${prob.id}')" class="px-2 py-0.5 rounded font-mono bg-stone-100 dark:bg-stone-800">${prog.status}</button>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          ` : ''}
+
+          ${matchedProjects.length > 0 ? `
+            <div class="rounded-2xl bg-white dark:bg-marble-900 border border-stone-200 dark:border-stone-800 overflow-hidden">
+              <div class="px-4 py-2 bg-marble-100/70 dark:bg-stone-900/70 border-b border-stone-200 dark:border-stone-800 text-xs font-mono font-semibold">V Labors (${matchedProjects.length})</div>
+              <div class="divide-y divide-stone-100 dark:divide-stone-800">
+                ${matchedProjects.map(proj => `
+                  <div onclick="selectInspectorItem('project', '${proj.id}')" class="cursor-pointer px-4 py-2.5 hover:bg-marble-50 dark:hover:bg-stone-800/40 flex items-center justify-between text-xs">
+                    <span class="font-semibold">${escapeHtml(proj.title)}</span>
+                    <button onclick="event.stopPropagation(); toggleItemCompletion('${proj.id}')" class="px-2 py-0.5 rounded bg-olympus-gold/15 text-olympus-goldDark dark:text-olympus-goldLight font-semibold">Toggle</button>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    /**
+     * ============================================================================
+     * 6. PERSISTENT DESKTOP INSPECTOR & MOBILE DRAWER (Auto-Save on Blur/Input)
+     * ============================================================================
+     */
+    function buildInspectorHtml(kind, id, prefix) {
+      if (kind === 'dsa') {
+        const prob = CURRICULUM_DATA.dsa.problems.find(p => p.id === id);
+        if (!prob) return '';
+        const prog = getDsaProgress(id);
+        const isSolved = prog.status === 'solved';
+
+        return `
+          <div class="p-4 border-b border-stone-200 dark:border-stone-800 bg-marble-100/60 dark:bg-stone-900/60">
+            <div class="flex items-center justify-between gap-2 mb-1">
+              <span class="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-olympus-laurel/15 text-olympus-laurel dark:text-emerald-300 font-semibold">LC #${prob.leetcodeId} • Cat ${prob.categoryCode}</span>
+              <button onclick="cycleDsaStatus('${id}')" class="px-2.5 py-1 rounded-md text-[11px] font-mono font-semibold ${isSolved ? 'bg-olympus-laurel text-white' : 'bg-olympus-gold text-white'}">
+                ${prog.status.toUpperCase()}
+              </button>
+            </div>
+            <h3 class="font-display font-bold text-sm text-stone-900 dark:text-white leading-snug">${escapeHtml(prob.title)}</h3>
+          </div>
+
+          <div class="p-4 space-y-3 overflow-y-auto flex-1 text-xs">
+            ${prob.frontendRelevance ? `
+              <div class="p-2.5 rounded-lg bg-olympus-gold/10 border border-olympus-gold/25 text-olympus-goldDark dark:text-olympus-goldLight">
+                <strong>FE Signal:</strong> ${escapeHtml(prob.frontendRelevance)}
+              </div>
+            ` : ''}
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[10px] font-mono uppercase text-stone-400 mb-1">Language</label>
+                <select id="${prefix}-dsa-lang" onchange="autoSaveInspector('${kind}', '${id}', '${prefix}')" class="w-full px-2.5 py-1.5 rounded-lg bg-marble-50 dark:bg-marble-950 border border-stone-200 dark:border-stone-800 text-xs">
+                  <option value="TypeScript" ${prog.solutionLanguage === 'TypeScript' ? 'selected' : ''}>TypeScript</option>
+                  <option value="JavaScript" ${prog.solutionLanguage === 'JavaScript' ? 'selected' : ''}>JavaScript</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-mono uppercase text-stone-400 mb-1">Attempts</label>
+                <input id="${prefix}-dsa-attempts" type="number" min="0" value="${prog.attempts || 0}" onchange="autoSaveInspector('${kind}', '${id}', '${prefix}')" class="w-full px-2.5 py-1.5 rounded-lg bg-marble-50 dark:bg-marble-950 border border-stone-200 dark:border-stone-800 text-xs font-mono" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[10px] font-mono uppercase text-stone-400 mb-1">Time Big-O</label>
+                <input id="${prefix}-dsa-time" type="text" placeholder="O(n)" value="${escapeHtml(prog.timeComplexity || '')}" oninput="autoSaveInspector('${kind}', '${id}', '${prefix}')" class="w-full px-2.5 py-1.5 rounded-lg bg-marble-50 dark:bg-marble-950 border border-stone-200 dark:border-stone-800 text-xs font-mono" />
+              </div>
+              <div>
+                <label class="block text-[10px] font-mono uppercase text-stone-400 mb-1">Space Big-O</label>
+                <input id="${prefix}-dsa-space" type="text" placeholder="O(1)" value="${escapeHtml(prog.spaceComplexity || '')}" oninput="autoSaveInspector('${kind}', '${id}', '${prefix}')" class="w-full px-2.5 py-1.5 rounded-lg bg-marble-50 dark:bg-marble-950 border border-stone-200 dark:border-stone-800 text-xs font-mono" />
+              </div>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label class="text-[10px] font-mono uppercase text-slate-400">Notes & Pattern</label>
+                <span class="text-[10px] text-slate-400">Auto-saved</span>
+              </div>
+              <textarea id="${prefix}-notes" rows="7" placeholder="Write intuition, optimal pattern, or gotchas..." oninput="autoSaveInspector('${kind}', '${id}', '${prefix}')" class="w-full p-2.5 rounded-xl bg-marble-50 dark:bg-marble-950 border border-slate-200 dark:border-slate-800 text-xs leading-relaxed focus:outline-none focus:ring-1 focus:ring-olympus-aegean">${escapeHtml(prog.notes || '')}</textarea>
+            </div>
+          </div>
+        `;
+      }
+
+      // Item or Project
+      let itemObj = null;
+      let badgeText = '';
+      if (kind === 'project') {
+        itemObj = CURRICULUM_DATA.projects.find(p => p.id === id);
+        badgeText = `Project 0${itemObj.order} • ${itemObj.tierLabel}`;
+      } else {
+        for (const mod of CURRICULUM_DATA.syllabus) {
+          const found = [...mod.practice, ...mod.interviewConcepts].find(i => i.id === id);
+          if (found) {
+            itemObj = found;
+            badgeText = `Module 0${mod.order} • ${found.type === 'practice' ? 'Practice' : 'Concept'}`;
+            break;
+          }
+        }
+      }
+      if (!itemObj) return '';
+      const prog = getItemProgress(id);
+
+      return `
+        <div class="p-4 border-b border-slate-200 dark:border-slate-800 bg-marble-100/60 dark:bg-slate-900/60">
+          <div class="flex items-center justify-between gap-2 mb-1">
+            <span class="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-olympus-aegean/10 text-olympus-aegean dark:text-olympus-aegeanLight font-semibold">${escapeHtml(badgeText)}</span>
+            <button onclick="toggleItemCompletion('${id}')" class="px-2.5 py-1 rounded-md text-[11px] font-semibold ${prog.completed ? 'bg-olympus-laurel text-white' : 'bg-olympus-aegean text-white'}">
+              ${prog.completed ? '✓ Done' : 'Complete'}
+            </button>
+          </div>
+          <h3 class="font-semibold text-sm text-slate-900 dark:text-white leading-snug">${escapeHtml(itemObj.title || itemObj.text)}</h3>
+        </div>
+
+        <div class="p-4 space-y-3 overflow-y-auto flex-1 text-xs">
+          ${itemObj.summary ? `<p class="text-slate-600 dark:text-slate-300 leading-relaxed">${escapeHtml(itemObj.summary)}</p>` : ''}
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-[10px] font-mono uppercase text-slate-400">${kind === 'project' ? 'Repo URL & Architecture' : 'Notes & Takeaways'}</label>
+              <span class="text-[10px] text-slate-400">Auto-saved</span>
+            </div>
+            <textarea id="${prefix}-notes" rows="9" placeholder="Add code notes, repo URLs, or interview takeaways..." oninput="autoSaveInspector('${kind}', '${id}', '${prefix}')" class="w-full p-2.5 rounded-xl bg-marble-50 dark:bg-marble-950 border border-slate-200 dark:border-slate-800 text-xs leading-relaxed focus:outline-none focus:ring-1 focus:ring-olympus-aegean">${escapeHtml(prog.notes || '')}</textarea>
+          </div>
+          ${prog.completedAt ? `<div class="text-[10px] font-mono text-slate-400">Completed: ${new Date(prog.completedAt).toLocaleDateString()}</div>` : ''}
+        </div>
+      `;
+    }
+
+    function renderDesktopInspector() {
+      const panel = document.getElementById('desktop-inspector');
+      if (!panel || !appState.selectedItem) return;
+      panel.innerHTML = buildInspectorHtml(appState.selectedItem.kind, appState.selectedItem.id, 'desk');
+    }
+
+    let autoSaveTimer = null;
+    function autoSaveInspector(kind, id, prefix) {
+      clearTimeout(autoSaveTimer);
+      autoSaveTimer = setTimeout(() => {
+        const notesVal = document.getElementById(`${prefix}-notes`)?.value || '';
+        if (kind === 'dsa') {
+          const current = getDsaProgress(id);
+          appState.dsaProblems[id] = {
+            ...current,
+            solutionLanguage: document.getElementById(`${prefix}-dsa-lang`)?.value || current.solutionLanguage,
+            attempts: parseInt(document.getElementById(`${prefix}-dsa-attempts`)?.value, 10) || 0,
+            timeComplexity: document.getElementById(`${prefix}-dsa-time`)?.value.trim() || '',
+            spaceComplexity: document.getElementById(`${prefix}-dsa-space`)?.value.trim() || '',
+            notes: notesVal
+          };
+        } else {
+          const current = getItemProgress(id);
+          appState.items[id] = { ...current, notes: notesVal };
+        }
+        saveState();
+      }, 250);
+    }
+
+    function selectInspectorItem(kind, id, rowIndex = null) {
+      appState.selectedItem = { kind, id };
+      if (rowIndex !== null) appState.focusedIndex = rowIndex;
+      saveState();
+
+      // On xl+ screens, update persistent inspector without opening modal drawer
+      if (window.innerWidth >= 1280) {
+        renderCurrentView();
+      } else {
+        openDetailDrawer(kind, id);
+      }
+    }
+
+    function openDetailDrawer(kind, id) {
+      activeDrawerItem = { kind, id };
+      const backdrop = document.getElementById('detail-drawer-backdrop');
+      const drawer = document.getElementById('detail-drawer');
+      const badgeEl = document.getElementById('drawer-badge');
+      const titleEl = document.getElementById('drawer-title');
+      const bodyEl = document.getElementById('drawer-body');
+      const toggleBtn = document.getElementById('drawer-toggle-complete');
+
+      if (kind === 'dsa') {
+        const prob = CURRICULUM_DATA.dsa.problems.find(p => p.id === id);
+        const prog = getDsaProgress(id);
+        badgeEl.textContent = `LC #${prob.leetcodeId} • Cat ${prob.categoryCode}`;
+        titleEl.textContent = prob.title;
+        bodyEl.innerHTML = buildInspectorHtml('dsa', id, 'mob');
+        // Strip duplicate header inside mobile drawer body
+        bodyEl.firstElementChild?.remove();
+
+        const isSolved = prog.status === 'solved';
+        toggleBtn.className = `px-3.5 py-2 rounded-lg text-xs font-semibold ${isSolved ? 'bg-olympus-laurel text-white' : 'bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-200'}`;
+        toggleBtn.textContent = isSolved ? '✓ Solved' : 'Cycle Status';
+        toggleBtn.onclick = () => cycleDsaStatus(id);
+      } else {
+        let itemObj = kind === 'project'
+          ? CURRICULUM_DATA.projects.find(p => p.id === id)
+          : CURRICULUM_DATA.syllabus.flatMap(m => [...m.practice, ...m.interviewConcepts]).find(i => i.id === id);
+        const prog = getItemProgress(id);
+        badgeEl.textContent = kind === 'project' ? `Project 0${itemObj.order}` : (itemObj.type === 'practice' ? 'Practice' : 'Concept');
+        titleEl.textContent = itemObj.title || itemObj.text;
+        bodyEl.innerHTML = buildInspectorHtml(kind, id, 'mob');
+        bodyEl.firstElementChild?.remove();
+
+        toggleBtn.className = `px-3.5 py-2 rounded-lg text-xs font-semibold ${prog.completed ? 'bg-olympus-laurel text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200'}`;
+        toggleBtn.textContent = prog.completed ? '✓ Done' : 'Mark Done';
+        toggleBtn.onclick = () => toggleItemCompletion(id);
+      }
+
+      backdrop.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        backdrop.classList.remove('opacity-0');
+        drawer.classList.remove('translate-x-full');
+        drawer.setAttribute('aria-hidden', 'false');
+      });
+    }
+
+    function closeDetailDrawer() {
+      const backdrop = document.getElementById('detail-drawer-backdrop');
+      const drawer = document.getElementById('detail-drawer');
+      backdrop.classList.add('opacity-0');
+      drawer.classList.add('translate-x-full');
+      drawer.setAttribute('aria-hidden', 'true');
+      setTimeout(() => {
+        backdrop.classList.add('hidden');
+        activeDrawerItem = null;
+        renderCurrentView();
+      }, 220);
+    }
+
+    /**
+     * ============================================================================
+     * 7. MUTATIONS & KEYBOARD COMMAND ENGINE
+     * ============================================================================
+     */
+    function toggleItemCompletion(id) {
+      const current = getItemProgress(id);
+      const nextCompleted = !current.completed;
+      appState.items[id] = {
+        ...current,
+        completed: nextCompleted,
+        completedAt: nextCompleted ? new Date().toISOString() : null
+      };
+      saveState();
+      renderCurrentView();
+      if (activeDrawerItem && activeDrawerItem.id === id) openDetailDrawer(activeDrawerItem.kind, id);
+      showToast(nextCompleted ? 'Completed ✓' : 'Marked incomplete');
+    }
+
+    function completeModuleBatch(modId) {
+      const mod = CURRICULUM_DATA.syllabus.find(m => m.id === modId);
+      if (!mod) return;
+      const now = new Date().toISOString();
+      [...mod.practice, ...mod.interviewConcepts].forEach(item => {
+        const cur = getItemProgress(item.id);
+        if (!cur.completed) {
+          appState.items[item.id] = { ...cur, completed: true, completedAt: now };
+        }
+      });
+      saveState();
+      renderCurrentView();
+      showToast(`Module 0${mod.order} completed!`);
+    }
+
+    function completeModuleBatch(modId) {
+      const mod = CURRICULUM_DATA.syllabus.find(m => m.id === modId);
+      if (!mod) return;
+      const now = new Date().toISOString();
+      [...mod.practice, ...mod.interviewConcepts].forEach(item => {
+        const cur = getItemProgress(item.id);
+        if (!cur.completed) {
+          appState.items[item.id] = { ...cur, completed: true, completedAt: now };
+        }
+      });
+      saveState();
+      renderCurrentView();
+      showToast(`Pillar ${mod.roman} mastered!`);
+    }
+
+    function cycleDsaStatus(id) {
+      const current = getDsaProgress(id);
+      const order = ['todo', 'in-progress', 'solved'];
+      const nextStatus = order[(order.indexOf(current.status) + 1) % order.length];
+
+      appState.dsaProblems[id] = {
+        ...current,
+        status: nextStatus,
+        attempts: nextStatus !== 'todo' ? Math.max(1, (current.attempts || 0) + (nextStatus === 'solved' ? 0 : 1)) : current.attempts,
+        completedAt: nextStatus === 'solved' ? new Date().toISOString() : null
+      };
+      saveState();
+      renderCurrentView();
+      if (activeDrawerItem && activeDrawerItem.id === id) openDetailDrawer('dsa', id);
+      showToast({ 'todo': 'Status: Todo', 'in-progress': 'Status: Active', 'solved': 'Solved ✓' }[nextStatus]);
+    }
+
+    function setModuleFilter(modId) {
+      appState.activeModuleFilter = modId;
+      renderCurrentView();
+    }
+
+    function setPillarTypeFilter(type) {
+      appState.activePillarTypeFilter = type;
+      renderCurrentView();
+    }
+
+    function jumpToPillar(modId) {
+      appState.activeModuleFilter = modId;
+      switchView('pillars');
+    }
+
+    function setProjectFilter(filter) {
+      appState.activeProjectFilter = filter;
+      renderCurrentView();
+    }
+
+    function setDsaCategory(catId) {
+      appState.activeDsaCategory = catId;
+      renderCurrentView();
+    }
+
+    function setDsaStatusFilter(status) {
+      appState.activeDsaStatusFilter = status;
+      renderCurrentView();
+    }
+
+    function clearGlobalSearch() {
+      appState.searchQuery = '';
+      document.getElementById('global-search').value = '';
+      renderCurrentView();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      applyTheme(appState.theme);
+      updateHideCompletedBtn();
+
+      document.querySelectorAll('.nav-btn, .mobile-nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          clearGlobalSearch();
+          switchView(btn.dataset.view);
+        });
+      });
+
+      document.getElementById('hide-completed-toggle').addEventListener('click', () => {
+        appState.hideCompleted = !appState.hideCompleted;
+        updateHideCompletedBtn();
+        saveState();
+        renderCurrentView();
+      });
+
+      document.getElementById('theme-toggle').addEventListener('click', () => {
+        const next = appState.theme === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+
+      let searchTimeout = null;
+      const searchInput = document.getElementById('global-search');
+      searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          appState.searchQuery = e.target.value;
+          renderCurrentView();
+        }, 120);
+      });
+
+      // Power-User Keyboard Shortcuts: 1-4 Views, / Search, J/K Row Navigation, Space Toggle
+      document.addEventListener('keydown', (e) => {
+        const tag = document.activeElement.tagName;
+        const isInput = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+
+        if (e.key === 'Escape') {
+          if (activeDrawerItem) closeDetailDrawer();
+          else if (isInput) document.activeElement.blur();
+          else if (appState.searchQuery) clearGlobalSearch();
+          return;
+        }
+
+        if (isInput) return;
+
+        if (e.key === '/') {
+          e.preventDefault();
+          searchInput.focus();
+        } else if (e.key === '1') switchView('sanctuary');
+        else if (e.key === '2') switchView('pillars');
+        else if (e.key === '3') switchView('labors');
+        else if (e.key === '4') switchView('agora');
+        else if (e.key === 'j' || e.key === 'k') {
+          const rows = Array.from(document.querySelectorAll('[data-nav-row]'));
+          if (rows.length === 0) return;
+          e.preventDefault();
+          const delta = e.key === 'j' ? 1 : -1;
+          const nextIdx = Math.max(0, Math.min(rows.length - 1, appState.focusedIndex + delta));
+          const target = rows[nextIdx];
+          if (target) {
+            appState.focusedIndex = nextIdx;
+            appState.selectedItem = { kind: target.dataset.itemKind, id: target.dataset.itemId };
+            renderCurrentView();
+            document.querySelector(`[data-nav-row="${nextIdx}"]`)?.scrollIntoView({ block: 'nearest' });
+          }
+        } else if (e.key === ' ') {
+          const rows = document.querySelectorAll('[data-nav-row]');
+          const target = rows[appState.focusedIndex];
+          if (target) {
+            e.preventDefault();
+            if (target.dataset.itemKind === 'dsa') cycleDsaStatus(target.dataset.itemId);
+            else toggleItemCompletion(target.dataset.itemId);
+          }
+        }
+      });
+
+      document.getElementById('drawer-close-btn').addEventListener('click', closeDetailDrawer);
+      document.getElementById('detail-drawer-backdrop').addEventListener('click', closeDetailDrawer);
+      document.getElementById('drawer-save-btn').addEventListener('click', closeDetailDrawer);
+
+      document.getElementById('export-progress-btn').addEventListener('click', () => {
+        const payload = JSON.stringify({
+          exportedAt: new Date().toISOString(),
+          curriculumId: CURRICULUM_DATA.meta.id,
+          telemetry: computeTelemetry(),
+          items: appState.items,
+          dsaProblems: appState.dsaProblems
+        }, null, 2);
+
+        const helper = document.createElement('textarea');
+        helper.value = payload;
+        helper.style.position = 'fixed';
+        helper.style.opacity = '0';
+        document.body.appendChild(helper);
+        helper.select();
+        try {
+          document.execCommand('copy');
+          showToast('Progress JSON copied!', 'success');
+        } catch (err) {
+          showToast('Copy failed.');
+        }
+        document.body.removeChild(helper);
+      });
+
+      updateGlobalTelemetry();
+      switchView(appState.activeView);
+    });
+  </script>
+</body>
+</html>
